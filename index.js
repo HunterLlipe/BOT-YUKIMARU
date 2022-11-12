@@ -13,7 +13,7 @@
   Para tentar tirar qualquer dúvida quanto ao código, contato:
   TELEGRAM: t.me/enzon19 | DISCORD: enzon19#9325 | E-MAIL: contato@enzon19.com
 
-  Versão atual: 3.1.2
+  Versão atual: 3.1.3
 
 */
 
@@ -177,7 +177,7 @@ bot.on('clickButton', interaction => {
 
   const buttonsActions = requireFromString(fs.readFileSync("./commands/buttonsActions.js", "utf8"));
   const parameters = [interaction, disbut, wixData, materialsItems];
-  const functions = [buttonsActions.listItem, buttonsActions.listBanner, buttonsActions.listMaterial, buttonsActions.listArtifacts, buttonsActions.listRecipes, buttonsActions.talents, buttonsActions.ascension, buttonsActions.recipes, buttonsActions.constelaciones, buttonsActions.passives, buttonsActions.artifacts]
+  const functions = [buttonsActions.listItem, buttonsActions.listBanner]
   functions[interaction.id.split("_")[0]](...parameters)
 
 });
