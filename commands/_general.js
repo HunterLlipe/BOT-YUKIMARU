@@ -7,7 +7,7 @@ const axios = require('axios');
 
 function ping (message) {
 
-  message.reply("🏓 Pong!");
+  message.reply("🏓 Pong! Testando deploy...");
 
 }
 
