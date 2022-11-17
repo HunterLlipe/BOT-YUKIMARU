@@ -36,9 +36,12 @@ async function repeat (message, args) {
   let repeatEmbed = "";
   if (args[0] == "!repete") args = "";
   if (message.attachments.size > 0 && message.attachments.first().name.toLowerCase().endsWith(".json")) repeatEmbed = (await axios.get(message.attachments.first().url)).data;
+  if (!args && repeatEmbed) {
+    if (repeatEmbed.content) args = repeatEmbed.content;
+  }
   
   if (args || repeatEmbed) {
-    message.channel.send(repeatEmbed);
+    message.channel.send(args, {embed: repeatEmbed.embeds[0]});
   } else {
     message.reply('você não mandou nada para repetir!');
   }
