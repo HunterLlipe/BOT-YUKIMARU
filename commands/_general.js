@@ -40,7 +40,9 @@ async function repeat (message, args) {
     if (repeatEmbed.content) args = repeatEmbed.content;
   }
   
-  if (args || repeatEmbed) {
+  if (args) {
+    message.channel.send(args);
+  } else if (repeatEmbed) {
     message.channel.send(args, {embed: repeatEmbed.embeds[0]});
   } else {
     message.reply('você não mandou nada para repetir!');
