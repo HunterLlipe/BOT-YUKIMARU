@@ -403,7 +403,7 @@ try {
         .addFields({ name: global.capitalize(banner.name), value: complete, inline: true }, { name: '\u200b', value: complete2, inline: true })
         .attachFiles([file])
         .setImage('attachment://resultImg.png')
-        .setFooter(`Esse foi seu ${rolls[bannerType + "Rolls"]}º desejo. Falta ${({"character": 90, "none": 90, "weapon": 80}[bannerType] + rolls[bannerType + "Last5"]) - rolls[bannerType + "Rolls"]} desejos para um 5 estrelas garantido.`);
+        .setFooter(`Esse foi seu ${rolls[bannerType + "Rolls"]}º desejo. Faltam ${({"character": 90, "none": 90, "weapon": 80}[bannerType] + rolls[bannerType + "Last5"]) - rolls[bannerType + "Rolls"]} desejos para um 5 estrelas garantido.`);
 
         sentMessage.delete();
         message.reply(rollres);
