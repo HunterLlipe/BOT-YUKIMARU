@@ -17,8 +17,10 @@ async function add (message, args, db) {
   if (roles == null) roles = [];
 
   if (args[1] == undefined) args[1] = "";
+  
+  const isAdmin = message.author.id == '555429270919446549' || message.member.hasPermission('ADMINISTRATOR');
 
-  if (args[0].startsWith('<@&') && args[0].endsWith('>') && /\p{Extended_Pictographic}/u.test(args[1]) && message.member.hasPermission('ADMINISTRATOR') || args[0].startsWith('<@&') && args[0].endsWith('>') && args[1].startsWith('<:') && message.member.hasPermission('ADMINISTRATOR')) {
+  if (args[0].startsWith('<@&') && args[0].endsWith('>') && /\p{Extended_Pictographic}/u.test(args[1]) && isAdmin || args[0].startsWith('<@&') && args[0].endsWith('>') && args[1].startsWith('<:') && isAdmin) {
 
     let alr = false;
 
@@ -46,7 +48,7 @@ async function add (message, args, db) {
 
     }
 
-  } else if (!message.member.hasPermission('ADMINISTRATOR')) {
+  } else if (!isAdmin) {
 
     message.reply('você não tem permissão para fazer isso.');
   
