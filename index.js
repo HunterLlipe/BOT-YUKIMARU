@@ -13,7 +13,7 @@
   Para tentar tirar qualquer dúvida quanto ao código, contato:
   TELEGRAM: t.me/enzon19 | DISCORD: enzon19#9325 | E-MAIL: contato@enzon19.com
 
-  Versão atual: 3.1.3
+  Versão atual: 3.1.4
 
 */
 

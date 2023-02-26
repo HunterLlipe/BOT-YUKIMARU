@@ -33,19 +33,20 @@ async function stats (message, botStats) {
 }
 
 async function repeat (message, args) {
-  let repeatEmbed = "";
-  if (args[0] == "!repete") args = "";
-  if (message.attachments.size > 0 && message.attachments.first().name.toLowerCase().endsWith(".json")) repeatEmbed = (await axios.get(message.attachments.first().url)).data;
-  if (!args && repeatEmbed) {
-    if (repeatEmbed.content) args = repeatEmbed.content;
-  }
-  
-  if (args) {
-    message.channel.send(args);
-  } else if (repeatEmbed) {
-    message.channel.send(args, {embed: repeatEmbed.embeds[0]});
+  if (message.member?.hasPermission('ADMINISTRATOR') || message.author.id == 555429270919446549 || message.member?.roles.cache.has('946917051535097886')) {
+    let repeatEmbed = "";
+    if (args[0] == "!repete") args = "";
+    if (message.attachments.size > 0 && message.attachments.first().name.toLowerCase().endsWith(".json")) repeatEmbed = (await axios.get(message.attachments.first().url)).data;
+    
+    if (args) {
+      message.channel.send(args);
+    } else if (repeatEmbed) {
+      message.channel.send(args || repeatEmbed.content, {embed: repeatEmbed.embeds[0]});
+    } else {
+      message.reply('você não mandou nada para repetir!');
+    }
   } else {
-    message.reply('você não mandou nada para repetir!');
+    message.reply("você não tem permissão para fazer isso!");
   }
 }
 

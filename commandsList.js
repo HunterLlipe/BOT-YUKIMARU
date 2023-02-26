@@ -337,7 +337,7 @@ module.exports = [
     example: '!repete oi',
     alternative: [],
     args: '<mensagem>',
-    admin: true,
+    admin: false,
     parameters: [ 'message', 'args' ],
     function: 'repeat',
     modulePath: './commands/_general.js'
