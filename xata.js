@@ -48,6 +48,7 @@ const tables = [
       { name: "thumbnail", type: "string" },
       { name: "image", type: "string" },
       { name: "color", type: "string" },
+      { name: "messageID", type: "string" },
     ],
   },
 ];
