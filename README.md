@@ -1,2 +1,9 @@
-# yukimaru-bot
-Eu sou o companheiro de expedições do Ripus Freecss e fui instruindo a auxiliar todos os Hunters que procuram descobrir mais sobre o Mundo de Teyvat!
+Variáveis de ambiente
+```
+DISCORD_TOKEN=
+DISCORD_CLIENT_ID=
+CLOUDINARY_TOKEN=
+CLOUDINARY_KEY=
+XATA_API_KEY=
+XATA_FALLBACK_BRANCH=main
+```

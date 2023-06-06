@@ -1,0 +1,7 @@
+{
+  "databaseURL": "https://Yukimaru-bqpg78.us-east-1.xata.sh/db/yukimaru",
+  "codegen": {
+    "output": "xata.js",
+    "moduleType": "cjs"
+  }
+}
