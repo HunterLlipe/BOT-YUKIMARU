@@ -5,7 +5,7 @@ function transformDataToDropdown (data, page, dropdownID, label = 'Selecionar...
   const items = data.map(item => {
     return {
       label: lodash.truncate(item.command || item.name, {'length': 25}), 
-      description: lodash.truncate(item.command ? item.name : `${{'genshin': 'Genshin Impact', 'honkai': 'Honkai: Star Rail'}[item.game]} • ${{'weapon': 'arma', 'character': 'personagem'}[item.type]}`, {'length': 50}), 
+      description: lodash.truncate(item.command ? item.name : `${{'genshin': 'Genshin Impact', 'honkai': 'Honkai: Star Rail'}[item.game]} • ${{'weapon': 'Arma', 'character': 'Personagem'}[item.type]}`, {'length': 50}), 
       value: `optionID_${item.id}`
     }
   });

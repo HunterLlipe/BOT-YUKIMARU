@@ -132,7 +132,7 @@ async function transformWishToEmbed(items, interaction, banner, inventory) {
   const result = lodash.chunk(formattedItems, 5);
   const itemEmbed = new EmbedBuilder()
     .setColor('#e22618')
-    .setTitle('Resultado da Oração de ' + interaction.user.username)
+    .setTitle(`Resultado ${banner.game === 'genshin' ? 'da Oração' : 'do Passe'} de ` + interaction.user.username)
     .setThumbnail(interaction.user.avatarURL())
     .addFields({ name: banner.name, value: result[0].join('\n'), inline: true }, { name: '\u200b', value: result[1].join('\n'), inline: true })
     

@@ -5,7 +5,7 @@ const xata = global.xata;
 
 const properties = new SlashCommandBuilder()
   .setName('roll')
-  .setDescription('Simular uma oração.')
+  .setDescription('Simular uma oração ou passe.')
   .addStringOption((option) =>
     option
       .setName("jogo")
