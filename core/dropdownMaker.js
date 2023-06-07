@@ -2,7 +2,13 @@ const { ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle } 
 const lodash = require('lodash');
 
 function transformDataToDropdown (data, page, dropdownID, label = 'Selecionar...') {
-  const items = data.map(item => ({label: lodash.truncate(item.command, {'length': 25}), description: lodash.truncate(item.name, {'length': 50}), value: `optionID_${item.id}`}));
+  const items = data.map(item => {
+    return {
+      label: lodash.truncate(item.command || item.name, {'length': 25}), 
+      description: lodash.truncate(item.command ? item.name : `${{'genshin': 'Genshin Impact', 'honkai': 'Honkai: Star Rail'}[item.game]} • ${{'weapon': 'arma', 'character': 'personagem'}[item.type]}`, {'length': 50}), 
+      value: `optionID_${item.id}`
+    }
+  });
   const itemsPerPage = lodash.chunk(items, 25);
   if (page >= itemsPerPage.length || page < 0) page = 0;
 

@@ -18,7 +18,7 @@ module.exports = {
         await require(`../interactions/${interaction.customId}`).execute(interaction);
       } catch (error) {
         logError(error, interaction.customId);
-        await interaction.editReply({content: `**Um erro ocorreu.** Erro:\n\`\`\`\n${error}\`\`\``, components: []});
+        await interaction.editReply({content: `**Um erro ocorreu.** Erro:\n\`\`\`\n${error}\`\`\``, components: [], embeds: []});
       }
     } else if (interaction.isChatInputCommand()) {
       const command = bot.commands.get(interaction.commandName);
@@ -29,7 +29,7 @@ module.exports = {
         logError(error, command.properties.name);
         let action = "editReply";
         if (['ping'].includes(command.properties.name)) action = "reply";
-        await interaction[action](`**Um erro ocorreu.** Erro:\n\`\`\`\n${error}\`\`\``);
+        await interaction[action]({content: `**Um erro ocorreu.** Erro:\n\`\`\`\n${error}\`\`\``, components: [], embeds: []});
       }
     } else if (interaction.isButton()) {
       try {
@@ -37,7 +37,7 @@ module.exports = {
         await require(`../buttons/${buttonsIDs[0]}`)[buttonsIDs[1]](interaction);
       } catch (error) {
         logError(error, interaction.customId);
-        await interaction.editReply(`**Um erro ocorreu.** Erro:\n\`\`\`\n${error}\`\`\``);
+        await interaction.editReply({content: `**Um erro ocorreu.** Erro:\n\`\`\`\n${error}\`\`\``, components: [], embeds: []});
       }
     } else if (interaction.isAutocomplete()) {
       const command = interaction.client.commands.get(interaction.commandName);

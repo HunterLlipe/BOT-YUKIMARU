@@ -159,7 +159,7 @@ async function genshinWishImage(items) {
   }
 
   // Botar uma imagem por cima para tampar as rebarbas
-  const imageOver = await loadImage(`${resourcesFolder}/rollsOver.png`);
+  const imageOver = await loadImage(`${resourcesFolder}/RollsOver.png`);
   mainContext.drawImage(imageOver, 0, 0);
 
   // Retornar imagem final
