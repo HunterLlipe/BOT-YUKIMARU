@@ -179,7 +179,7 @@ async function banner (game, linkData, templateName) {
   };
   const type = types[(article.toLowerCase().match(/\|type.*?= ?(.*)/)[1])?.trim()];
 
-  return await newData.newBanner(game, portugueseName, type, type != 'standard' ? boostedItems[0].split(' ')[0] : 'mochileiro', generalItems, boostedItems, hostIsPortuguese ? 'name' : 'englishName');
+  return await newData.newBanner(game, portugueseName.slice(0, -11), type, type != 'standard' ? boostedItems[0].split(' ')[0] : 'mochileiro', generalItems, boostedItems, hostIsPortuguese ? 'name' : 'englishName');
 }
 
 // (async () => console.log(await honkaiBanner('https://honkai-star-rail.fandom.com/wiki/Stellar_Warp')))();

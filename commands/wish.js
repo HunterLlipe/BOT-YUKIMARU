@@ -61,10 +61,19 @@ let usageCount = {
 async function execute(interaction) {
   const command = interaction.options.getString('apelido');
   const game = interaction.options.getString('jogo');
+
+  if (game === 'honkai' && interaction.channelId == '844220451785146439') {
+    interaction.reply({content: 'Ei, não simule passes de Honkai: Star Rail neste canal!', ephemeral: true});
+    return;
+  }
+
   interaction.reply(game === 'genshin' ? 'https://media3.giphy.com/media/LQ9IaEvO55PrR2bgIA/giphy.gif' : 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTQ5YjU2NThiZjE2ODgzMTFjOGE0NTBkZGQyZmY4MzA2MDdlNmNkOSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/uBEt8qhQ0XbVBP8ftd/giphy.gif');
 
   let banner = (await xata.db.banners.filter({ command: command.toLowerCase(), game }).getAll())[0];
-  if (!banner) throw 'Este banner não existe.';
+  if (!banner) {
+    interaction.editReply('Este banner não existe.')
+    return;
+  }
 
   const items = (await xata.db.items.read(banner.generalItems)).filter(item => item);
   const boostedItems = items.filter(item => banner.boostedItems.includes(item.id));

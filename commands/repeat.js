@@ -4,6 +4,8 @@ const axios = require('axios');
 const properties = new SlashCommandBuilder()
   .setName('repetir')
   .setDescription('Faça o bot repetir um texto, arquivo ou embed.')
+  .setDefaultMemberPermissions(0)
+  .setDMPermission(false)
   .addStringOption((option) =>
     option
       .setName("texto")
@@ -16,7 +18,7 @@ const properties = new SlashCommandBuilder()
   );
 
 async function execute(interaction) {
-  const text = interaction.options.getString('texto');
+  let text = interaction.options.getString('texto');
   const file = interaction.options.getAttachment('arquivo');
   const isEmbed = file?.name.toLowerCase().endsWith(".json");
   const attachment = isEmbed ? (await axios.get(file.url)).data : {files: [file]}
@@ -26,6 +28,7 @@ async function execute(interaction) {
     return;
   }
   
+  if (text) text = text.replace(/\\n/g, '\n');
   interaction.reply({ content: 'Repetindo mensagem...', ephemeral: true });
   const channel = interaction.channel;
   channel.send(file ? { content: text, ...attachment } : { content: text }); //, embeds: [embed]
