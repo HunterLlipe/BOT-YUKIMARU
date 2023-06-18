@@ -67,6 +67,41 @@ const properties = new SlashCommandBuilder()
           .setAutocomplete(true)
           .setRequired(true)
       )
+      .addStringOption((option) =>
+        option
+          .setName("subtipo2")
+          .setDescription("Tipo da arma ou visão/elemento do personagem.")
+          .addChoices(
+            {
+              name: "A Destruição",
+              value: "the destruction"
+            },
+            {
+              name: "A Caça",
+              value: "the hunt"
+            },
+            {
+              name: "A Erudição",
+              value: "the erudition"
+            },
+            {
+              name: "A Harmonia",
+              value: "the harmony"
+            },
+            {
+              name: "A Inexistência",
+              value: "the nihility"
+            },
+            {
+              name: "A Preservação",
+              value: "the preservation"
+            },
+            {
+              name: "A Abundância",
+              value: "the abundance"
+            }
+          )
+      )
   )
   .addSubcommand((subcommand) =>
     subcommand
@@ -179,13 +214,14 @@ async function execute(interaction) {
     const type = interaction.options.getString("tipo");
     const quality = interaction.options.getInteger("qualidade");
     const subtype = interaction.options.getString("subtipo");
+    const subtype2 = interaction.options.getString("subtipo2");
     const englishName = interaction.options.getString("nome_em_inglês");
 
     const discordImage = interaction.options.getAttachment("foto");
     const imageUpload = await cloudinary.uploader.upload(discordImage.url);
     const image = imageUpload.secure_url;
 
-    const item = await newData.newItem(game, name, type, quality, image, subtype, englishName);
+    const item = await newData.newItem(game, name, englishName, type, quality, image, subtype, subtype2);
     interaction.editReply({
       embeds: [await transformItemToEmbed(item)],
     });

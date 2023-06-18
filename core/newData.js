@@ -1,29 +1,32 @@
 const xata = global.xata;
 const Vibrant = require("node-vibrant");
 
-async function newItem (game, name, type, quality, image, subtype, englishName, database = xata.db.items, method = 'create') {
+async function newItem (game, name, englishName, type, quality, image, subtype, subtype2, database = xata.db.items, method = 'create') {
   const subtypes = ['anemo', 'geo', 'electro', 'dendro', 'hydro', 'pyro', 'cryo', 'sword', 'claymore', 'polearm', 'catalyst', 'bow', 'physical', 'fire', 'ice', 'lightning', 'wind', 'quantum', 'imaginary', 'the destruction', 'the hunt', 'the erudition', 'the harmony', 'the nihility', 'the preservation', 'the abundance'];
   // formatando dados
   game = game.toLowerCase();
   type = type.toLowerCase();
   subtype = subtype.toLowerCase();
+  subtype2 = subtype2?.toLowerCase();
   quality = parseInt(quality);
 
   // conferindo dados
   if (!["honkai", "genshin"].includes(game)) throw "Jogo inexistente.";
   if (!["weapon", "character"].includes(type)) throw "Tipo de item inexistente.";
   if (!subtypes.includes(subtype)) throw "Subtipo de item inexistente.";
+  if (subtype2 && !subtypes.includes(subtype2)) throw "Subtipo 2 de item inexistente.";
   if (isNaN(quality)) throw "Quantidade de estrelas não é um número.";
   if (quality < 1 || quality > 5) throw "Quantidade de estrelas errada.";
-
+  
   return database[method]({
+    game: game,
     name: name,
     englishName: englishName.toLowerCase(),
-    quality: quality,
     type: type,
-    subtype: subtype,
+    quality: quality,
     image: image,
-    game: game
+    subtype: subtype,
+    subtype2: subtype2 || null
   });
 }
 
@@ -60,9 +63,6 @@ async function newBanner (game, name, type, command, generalItems, boostedItems,
 }
 
 async function newRole (emoji, roleID, title, description, thumbnail, image, color, database = xata.db.roles, method = 'create') {
-  // conferindo dados
-  // em breve...
-
   if (!color) {
     const palette = await Vibrant.from(thumbnail).getPalette();
     color = palette.Vibrant.hex;

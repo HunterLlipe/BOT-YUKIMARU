@@ -16,7 +16,7 @@ const tables = [
       { name: "subtype", type: "string" },
       { name: "englishName", type: "string" },
       { name: "game", type: "string", notNull: true, defaultValue: "genshin" },
-      { name: "createdAt", type: "datetime", defaultValue: "now" },
+      { name: "subtype2", type: "string" },
     ],
   },
   {
@@ -28,7 +28,6 @@ const tables = [
       { name: "boostedItems", type: "multiple" },
       { name: "command", type: "string" },
       { name: "game", type: "string" },
-      { name: "createdAt", type: "datetime", defaultValue: "now" },
     ],
   },
   {

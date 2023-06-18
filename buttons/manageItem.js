@@ -1,7 +1,9 @@
 const xata = global.xata;
 const cloudinary = global.cloudinary;
-const { ModalBuilder, TextInputBuilder, ActionRowBuilder, TextInputStyle } = require('discord.js');
+const { ModalBuilder, TextInputBuilder, ActionRowBuilder, TextInputStyle, AttachmentBuilder } = require('discord.js');
+const wishCore = require("../core/wish");
 const { transformDataToDropdown } = require("../core/dropdownMaker");
+const { transformWishToEmbed } = require("../core/embedMaker");
 
 async function dropdownPage (interaction, page) {
   // converter a mensagem em um objeto com os filtros
@@ -96,9 +98,9 @@ async function edit (interaction) {
       new TextInputBuilder()
         .setCustomId("subtype")
         .setLabel("Tipo da arma ou visão/elemento do personagem.")
-        .setPlaceholder('Digite o nome do subtipo em inglês')
+        .setPlaceholder('Digite o nome do subtipo em inglês — se tiver mais de um, separe por ;')
         .setStyle(TextInputStyle.Short)
-        .setValue(item.subtype)
+        .setValue(item.subtype2 ? item.subtype + ";" + item.subtype2 : item.subtype)
         .setRequired(true)
     )
   );
@@ -110,10 +112,27 @@ async function erase (interaction) {
   const itemID = interaction.customId.slice(17);
 	const item = await xata.db.items.read(itemID);
   item.delete().then(() => {
-    interaction.update({content: `Item **${item.name}** foi **deletado**.`, embeds: [], components: []})
-  })
+    interaction.update({content: `Item **${item.name}** foi **deletado**.`, embeds: [], components: []});
+  });
   const photoUrlRegExp = item.image.match(/https:\/\/res\.cloudinary\.com\/.*?\/image\/upload\/v.*?\/(.*?)\./);
   if (photoUrlRegExp) cloudinary.api.delete_resources([photoUrlRegExp[1]]);
 }
 
-module.exports = {previousPage, nextPage, edit, erase}
+async function preview (interaction) {
+  await interaction.deferReply();
+  const itemID = interaction.customId.slice(19);
+	const item = await xata.db.items.read(itemID);
+  const wish = new Array(10).fill(item);
+  const banner = {
+    name: item.name,
+    game: item.game
+  }
+  
+  // enviar embed e imagem
+  const wishResult = new AttachmentBuilder(await wishCore[item.game + 'WishImage'](wish), {name: 'wishResult.png'});
+  let embed = await transformWishToEmbed(wish, interaction, banner);
+  embed.setImage('attachment://wishResult.png');
+  interaction.editReply({ embeds: [embed], files: [wishResult]});
+}
+
+module.exports = {previousPage, nextPage, edit, erase, preview}

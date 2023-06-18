@@ -64,8 +64,8 @@ async function erase (interaction) {
 	const role = await xata.db.roles.read(roleID);
 
   role.delete().then(() => {
-    interaction.update({content: `Cargo **<@&${role.id}>** foi **deletado** do banco de dados, não do Discord.`, embeds: [], components: []})
-  })
+    interaction.update({content: `Cargo **<@&${role.id}>** foi **deletado** do banco de dados, não do Discord.`, embeds: [], components: []});
+  });
 }
 
 module.exports = {edit, erase}

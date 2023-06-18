@@ -1,4 +1,7 @@
 const logError = require('../core/logError');
+const bot = global.bot;
+const cooldowns = bot.cooldowns;
+const { Collection } = require('discord.js');
 
 module.exports = {
 	name: 'interactionCreate',
@@ -22,13 +25,40 @@ module.exports = {
       }
     } else if (interaction.isChatInputCommand()) {
       const command = bot.commands.get(interaction.commandName);
+      const commandName = command.properties.name;
+
+      if (command.cooldown) {
+        // se pedir roll de honkai, aumenta pra 15
+        const game = interaction.options.getString('jogo');
+        const commandIsHonkaiRoll = game === 'honkai' && commandName === 'roll';
+
+        if (!cooldowns.has(commandName)) {
+          cooldowns.set(commandName, new Collection());
+        }
+        
+        const now = Date.now();
+        const timestamps = cooldowns.get(commandName);
+        const cooldownAmount = commandIsHonkaiRoll ? 15000 : command.cooldown * 1000;
+        
+        if (timestamps.has(interaction.user.id)) {
+          const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
+        
+          if (now < expirationTime) {
+            const expiredTimestamp = Math.round(expirationTime / 1000);
+            return interaction.reply({ content: `**Calma.** Você pode usar este comando novamente <t:${expiredTimestamp}:R>.`, ephemeral: true });
+          }
+        }
+
+        timestamps.set(interaction.user.id, now);
+        setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
+      }
 
       try {
         await command.execute(interaction);
       } catch (error) {
-        logError(error, command.properties.name);
+        logError(error, commandName);
         let action = "editReply";
-        if (['ping'].includes(command.properties.name)) action = "reply";
+        if (['ping'].includes(commandName)) action = "reply";
         await interaction[action]({content: `**Um erro ocorreu.** Erro:\n\`\`\`\n${error}\`\`\``, components: [], embeds: []});
       }
     } else if (interaction.isButton()) {

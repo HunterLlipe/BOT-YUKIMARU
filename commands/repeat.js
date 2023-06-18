@@ -1,10 +1,9 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
 const axios = require('axios');
 
 const properties = new SlashCommandBuilder()
   .setName('repetir')
   .setDescription('Faça o bot repetir um texto, arquivo ou embed.')
-  .setDefaultMemberPermissions(0)
   .setDMPermission(false)
   .addStringOption((option) =>
     option
@@ -18,6 +17,12 @@ const properties = new SlashCommandBuilder()
   );
 
 async function execute(interaction) {
+  const hunterEditorRoleID = '946917051535097886';
+  if (!interaction.member.roles.cache.has(hunterEditorRoleID) && !interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+    interaction.reply({ content: 'Você não tem permissão para usar este comando.', ephemeral: true });
+    return;
+  } 
+
   let text = interaction.options.getString('texto');
   const file = interaction.options.getAttachment('arquivo');
   const isEmbed = file?.name.toLowerCase().endsWith(".json");

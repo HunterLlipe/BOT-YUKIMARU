@@ -29,7 +29,7 @@ function genshinItems (names) {
     }
   };
 
-  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, searchQuery, searchURLStartIndex, urlVariables);
+  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, null, searchQuery, searchURLStartIndex, urlVariables);
 }
 
 function honkaiItems (names) {
@@ -38,6 +38,7 @@ function honkaiItems (names) {
   const qualityRegExp = /\|rarity.*?= ?(.*)/;
   const typeRegExp = /character|light cone/;
   const weaponSubtypeRegExp = /\|effect_path.*?= ?(.*)/;
+  const secondSubtypeRegExp = /\|path.*?= ?(.*)/;
   const searchQuery = ' Honkai Star Rail Database - Honey Hunter';
   const searchURLStartIndex = 33;
   const urlVariables = {
@@ -52,10 +53,10 @@ function honkaiItems (names) {
     }
   };
 
-  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, searchQuery, searchURLStartIndex, urlVariables);
+  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, secondSubtypeRegExp, searchQuery, searchURLStartIndex, urlVariables);
 }
 
-async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, searchQuery, searchURLStartIndex, urlVariables) {
+async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, secondSubtypeRegExp, searchQuery, searchURLStartIndex, urlVariables) {
   const sharp = require('sharp');
 
   const fandom = new nodemw({
@@ -92,6 +93,8 @@ async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtype
     let itemType = article.toLowerCase().match(typeRegExp)[0];
     if (['light cone'].includes(itemType)) itemType = 'weapon';
     const itemSubtype = article.toLowerCase().match(itemType === 'character' ? /\|element.*?= ?(.*)/ : weaponSubtypeRegExp)[1];
+    const testItemSubtype2 = article.toLowerCase().match(secondSubtypeRegExp) || [null, null];
+    const itemSubtype2 = testItemSubtype2[1];
   
     // imagem
     const searchResult = (await ddg.search(name + searchQuery)).results[0];
@@ -113,7 +116,7 @@ async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtype
       continue;
     }
     
-    items.push(await newData.newItem(game, portugueseName, itemType, itemQuality, imageURL, itemSubtype, englishName));
+    items.push(await newData.newItem(game, portugueseName, englishName, itemType, itemQuality, imageURL, itemSubtype, itemSubtype2));
   }
   
   return {items, fails};
@@ -178,8 +181,13 @@ async function banner (game, linkData, templateName) {
     "standard": "standard"
   };
   const type = types[(article.toLowerCase().match(/\|type.*?= ?(.*)/)[1])?.trim()];
+  const commandNicks = {
+    character: boostedItems[0].split(' ')[0],
+    weapon: 'armas',
+    standard: 'mochileiro'
+  }
 
-  return await newData.newBanner(game, portugueseName.slice(0, -11), type, type != 'standard' ? boostedItems[0].split(' ')[0] : 'mochileiro', generalItems, boostedItems, hostIsPortuguese ? 'name' : 'englishName');
+  return await newData.newBanner(game, portugueseName.slice(0, -11), type, commandNicks[type], generalItems, boostedItems, hostIsPortuguese ? 'name' : 'englishName');
 }
 
 // (async () => console.log(await honkaiBanner('https://honkai-star-rail.fandom.com/wiki/Stellar_Warp')))();

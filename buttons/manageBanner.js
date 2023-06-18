@@ -108,8 +108,8 @@ async function erase (interaction) {
 	const banner = await xata.db.banners.read(bannerID);
 
   banner.delete().then(() => {
-    interaction.update({content: `Banner **${banner.name}** foi **deletado**.`, embeds: [], components: []})
-  })
+    interaction.update({content: `Banner **${banner.name}** foi **deletado**.`, embeds: [], components: []});
+  });
 }
 
 module.exports = {previousPage, nextPage, edit, erase}

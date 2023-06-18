@@ -16,7 +16,7 @@
 
 const logError = require('./core/logError');
 const botWeb = require('express')();
-const { Client, GatewayIntentBits, Partials } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection } = require('discord.js');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -36,6 +36,7 @@ const bot = new Client({
     Partials.Reaction
   ]
 });
+bot.cooldowns = new Collection();
 
 const { getXataClient } = require("./xata");
 const xata = getXataClient();

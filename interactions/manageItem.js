@@ -16,6 +16,10 @@ async function execute (interaction) {
 				.setLabel('Editar')
 				.setStyle(ButtonStyle.Secondary),
 			new ButtonBuilder()
+				.setCustomId(`manageItem_preview_${itemID}`)
+				.setLabel('Pré-Visualizar Roll')
+				.setStyle(ButtonStyle.Secondary),
+			new ButtonBuilder()
 				.setCustomId(`manageItem_erase_${itemID}`)
 				.setLabel('Apagar')
 				.setStyle(ButtonStyle.Secondary)

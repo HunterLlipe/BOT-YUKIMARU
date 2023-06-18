@@ -2,6 +2,8 @@ const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
 const wishCore = require("../core/wish");
 const { transformWishToEmbed } = require("../core/embedMaker");
 const xata = global.xata;
+const bot = global.bot;
+const cooldowns = bot.cooldowns;
 
 const properties = new SlashCommandBuilder()
   .setName('roll')
@@ -67,11 +69,20 @@ async function execute(interaction) {
     return;
   }
 
-  interaction.reply(game === 'genshin' ? 'https://media3.giphy.com/media/LQ9IaEvO55PrR2bgIA/giphy.gif' : 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTQ5YjU2NThiZjE2ODgzMTFjOGE0NTBkZGQyZmY4MzA2MDdlNmNkOSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/uBEt8qhQ0XbVBP8ftd/giphy.gif');
+  if (game === 'genshin' && interaction.channelId == '1116458669895340173') {
+    interaction.reply({content: 'Ei, não simule passes de Genshin Impact neste canal!', ephemeral: true});
+    return;
+  }
+
+  await interaction.reply(game === 'genshin' ? 'https://media3.giphy.com/media/LQ9IaEvO55PrR2bgIA/giphy.gif' : 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTQ5YjU2NThiZjE2ODgzMTFjOGE0NTBkZGQyZmY4MzA2MDdlNmNkOSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/uBEt8qhQ0XbVBP8ftd/giphy.gif');
 
   let banner = (await xata.db.banners.filter({ command: command.toLowerCase(), game }).getAll())[0];
   if (!banner) {
-    interaction.editReply('Este banner não existe.')
+    interaction.editReply({content: 'Este banner não existe.', files: []});
+
+    const timestamps = cooldowns.get('roll');
+    timestamps.delete(interaction.user.id);
+    
     return;
   }
 
@@ -105,7 +116,7 @@ async function execute(interaction) {
   const wishResult = new AttachmentBuilder(await wishCore[game + 'WishImage'](wish), {name: 'wishResult.png'});
   let embed = await transformWishToEmbed(wish, interaction, banner, inventory);
   embed.setImage('attachment://wishResult.png');
-  interaction.editReply({content: '', embeds: [embed], files: [wishResult]})
+  interaction.editReply({content: '', embeds: [embed], files: [wishResult]});
 }
 
-module.exports = { properties, execute };
+module.exports = { cooldown: 7, properties, execute };

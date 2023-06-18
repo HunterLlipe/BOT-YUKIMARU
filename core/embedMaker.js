@@ -41,6 +41,10 @@ async function transformItemToEmbed(item) {
     weapon: "Tipo",
     character: "Visão/Elemento"
   };
+  const subtype2PortugueseLabel = {
+    weapon: "Subtipo 2",
+    character: "Classe"
+  };
 
   const palette = await Vibrant.from(item.image).getPalette();
   const itemEmbed = new EmbedBuilder()
@@ -60,6 +64,8 @@ async function transformItemToEmbed(item) {
       }
     )
     .setImage(item.image);
+
+  if (item.subtype2) itemEmbed.addFields({ name: subtype2PortugueseLabel[item.type], value: subtypePortuguese[item.subtype2], inline: true });
 
   return itemEmbed;
 }
@@ -120,13 +126,15 @@ async function transformWishToEmbed(items, interaction, banner, inventory) {
     'weapon': 80,
     'standard': 90
   }
-  const footerLabel = {
-    genshin: `Esse foi sua ${JSON.parse(inventory.usageCount)[banner.type]}ª oração. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} orações para um 5 estrelas garantido.`,
-    honkai: `Esse foi seu ${JSON.parse(inventory.usageCount)[banner.type]}º passe. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} passes para um 5 estrelas garantido.`
+  const footerLabel = () => {
+    return {
+      genshin: `Esse foi sua ${JSON.parse(inventory.usageCount)[banner.type]}ª oração. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} orações para um 5 estrelas garantido.`,
+      honkai: `Esse foi seu ${JSON.parse(inventory.usageCount)[banner.type]}º passe. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} passes para um 5 estrelas garantido.`
+    }
   }
   
   const formattedItems = items.map(item => {
-    const itemText = `[${item.quality}★] ${subtypeEmoji[item.subtype]} ${item.name}`;
+    const itemText = `[${item.quality}★] ${subtypeEmoji[item.subtype]}${item.subtype2 ? subtypeEmoji[item.subtype2] : ''} ${item.name}`;
     return item.quality === 5 ? `**${itemText}**` : itemText;
   });
   const result = lodash.chunk(formattedItems, 5);
@@ -136,7 +144,7 @@ async function transformWishToEmbed(items, interaction, banner, inventory) {
     .setThumbnail(interaction.user.avatarURL())
     .addFields({ name: banner.name, value: result[0].join('\n'), inline: true }, { name: '\u200b', value: result[1].join('\n'), inline: true })
     
-  if (banner.type && inventory) itemEmbed.setFooter({ text: footerLabel[banner.game] });
+  if (banner.type && inventory) itemEmbed.setFooter({ text: footerLabel()[banner.game] });
 
   return itemEmbed;
 }
