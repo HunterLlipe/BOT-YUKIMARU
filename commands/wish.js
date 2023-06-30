@@ -1,4 +1,6 @@
 const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
+const Mission = require('../core/missionClass');
+const { DateTime } = require("luxon");
 const wishCore = require("../core/wish");
 const { transformWishToEmbed } = require("../core/embedMaker");
 const xata = global.xata;
@@ -117,6 +119,27 @@ async function execute(interaction) {
   let embed = await transformWishToEmbed(wish, interaction, banner, inventory);
   embed.setImage('attachment://wishResult.png');
   interaction.editReply({content: '', embeds: [embed], files: [wishResult]});
+
+  const wishMission = new Mission(...Object.values(Mission.missions.find(mission => mission.name === 'makeAWish')), interaction.user.id);
+  await wishMission.markAsDone();
+  
+  const sevenWishesMission = new Mission(...Object.values(Mission.missions.find(mission => mission.name === 'make7Wishes')), interaction.user.id);
+  const userMissions = await sevenWishesMission.getMissionsAsObject();
+
+
+  if (!sevenWishesMission.isDone(userMissions)) {
+    const sevenWishesMissionProgress = await sevenWishesMission.getProgress() || [];
+    const currentDate = DateTime.now().setZone('America/Sao_Paulo');
+    let filteredWeekProgress = sevenWishesMissionProgress.filter(date => DateTime.fromISO(date).weekday === currentDate.weekday);
+
+    if (sevenWishesMissionProgress.length < 6) {
+      filteredWeekProgress.push(currentDate.toISO());
+      await sevenWishesMission.setProgress(filteredWeekProgress);
+    } else {
+      await sevenWishesMission.markAsDone();
+      sevenWishesMission.setProgress([]);
+    }
+  }
 }
 
 module.exports = { cooldown: 7, properties, execute };

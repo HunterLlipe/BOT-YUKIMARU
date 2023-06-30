@@ -50,6 +50,24 @@ const tables = [
       { name: "messageID", type: "string" },
     ],
   },
+  {
+    name: "huntersMissions",
+    columns: [
+      { name: "dailyMissions", type: "text" },
+      { name: "points", type: "int" },
+      { name: "weeklyMissions", type: "text" },
+      { name: "monthlyMissions", type: "text" },
+      { name: "progress", type: "text" },
+    ],
+  },
+  {
+    name: "luckyItems",
+    columns: [
+      { name: "name", type: "string" },
+      { name: "description", type: "text" },
+      { name: "image", type: "string" },
+    ],
+  },
 ];
 /** @type { import('../../client/src').ClientConstructor<{}> } */
 const DatabaseClient = (0, client_1.buildClient)();

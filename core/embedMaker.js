@@ -128,8 +128,8 @@ async function transformWishToEmbed(items, interaction, banner, inventory) {
   }
   const footerLabel = () => {
     return {
-      genshin: `Esse foi sua ${JSON.parse(inventory.usageCount)[banner.type]}ª oração. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} orações para um 5 estrelas garantido.`,
-      honkai: `Esse foi seu ${JSON.parse(inventory.usageCount)[banner.type]}º passe. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} passes para um 5 estrelas garantido.`
+      genshin: `Esse foi sua ${JSON.parse(inventory.usageCount)[banner.type]}ª Oração. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} Orações para ${['character', 'standard'].includes(banner.type) ? 'um Personagem 5-estrelas garantido.' : 'uma Arma 5-estrelas garantida.'}`,
+      honkai: `Esse foi seu ${JSON.parse(inventory.usageCount)[banner.type]}º Passe. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} Passes para ${['character', 'standard'].includes(banner.type) ? 'um Personagem 5-estrelas garantido.' : 'uma Arma 5-estrelas garantida.'}`
     }
   }
   
