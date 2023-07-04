@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const Mission = require('../core/missionClass');
 
 const properties = new SlashCommandBuilder()
-  .setName('missões')
+  .setName('expedições')
   .setDescription('Ver quantidade de Pontos de Expedições e Expedições pendentes.');
 
 async function execute(interaction) {
