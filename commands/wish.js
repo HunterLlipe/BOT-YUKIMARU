@@ -126,11 +126,10 @@ async function execute(interaction) {
   const sevenWishesMission = new Mission(...Object.values(Mission.missions.find(mission => mission.name === 'make7Wishes')), interaction.user.id);
   const userMissions = await sevenWishesMission.getMissionsAsObject();
 
-
   if (!sevenWishesMission.isDone(userMissions)) {
     const sevenWishesMissionProgress = await sevenWishesMission.getProgress() || [];
     const currentDate = DateTime.now().setZone('America/Sao_Paulo');
-    let filteredWeekProgress = sevenWishesMissionProgress.filter(date => DateTime.fromISO(date).weekday === currentDate.weekday);
+    let filteredWeekProgress = sevenWishesMissionProgress.filter(date => DateTime.fromISO(date).weekNumber === currentDate.weekNumber);
 
     if (sevenWishesMissionProgress.length < 6) {
       filteredWeekProgress.push(currentDate.toISO());
