@@ -92,7 +92,7 @@ async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtype
     const itemQuality = Number(article.match(qualityRegExp)[1]);
     let itemType = article.toLowerCase().match(typeRegExp)[0];
     if (['light cone'].includes(itemType)) itemType = 'weapon';
-    const itemSubtype = article.toLowerCase().match(itemType === 'character' ? /\|element.*?= ?(.*)/ : weaponSubtypeRegExp)[1];
+    const itemSubtype = article.toLowerCase().match(itemType === 'character' ? /\|combattype.*?= ?(.*)/ : weaponSubtypeRegExp)[1];
     const testItemSubtype2 = article.toLowerCase().match(secondSubtypeRegExp) || [null, null];
     const itemSubtype2 = testItemSubtype2[1];
   
