@@ -15,6 +15,7 @@ function genshinItems (names) {
   const qualityRegExp = /\|quality.*?= ?(.*)/;
   const typeRegExp = /character|weapon/;
   const weaponSubtypeRegExp = /\|type.*?= ?(.*)/;
+  const characterSubtypeRegExp = /\|element.*?= ?(.*)/;
   const searchQuery = ' honey impact';
   const searchURLStartIndex = 37;
   const urlVariables = {
@@ -29,7 +30,7 @@ function genshinItems (names) {
     }
   };
 
-  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, null, searchQuery, searchURLStartIndex, urlVariables);
+  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, null, searchQuery, searchURLStartIndex, urlVariables);
 }
 
 function honkaiItems (names) {
@@ -38,6 +39,7 @@ function honkaiItems (names) {
   const qualityRegExp = /\|rarity.*?= ?(.*)/;
   const typeRegExp = /character|light cone/;
   const weaponSubtypeRegExp = /\|effect_path.*?= ?(.*)/;
+  const characterSubtypeRegExp = /\|combattype.*?= ?(.*)/;
   const secondSubtypeRegExp = /\|path.*?= ?(.*)/;
   const searchQuery = ' Honkai Star Rail Database - Honey Hunter';
   const searchURLStartIndex = 33;
@@ -53,10 +55,10 @@ function honkaiItems (names) {
     }
   };
 
-  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, secondSubtypeRegExp, searchQuery, searchURLStartIndex, urlVariables);
+  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, secondSubtypeRegExp, searchQuery, searchURLStartIndex, urlVariables);
 }
 
-async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, secondSubtypeRegExp, searchQuery, searchURLStartIndex, urlVariables) {
+async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, secondSubtypeRegExp, searchQuery, searchURLStartIndex, urlVariables) {
   const sharp = require('sharp');
 
   const fandom = new nodemw({
@@ -92,7 +94,7 @@ async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtype
     const itemQuality = Number(article.match(qualityRegExp)[1]);
     let itemType = article.toLowerCase().match(typeRegExp)[0];
     if (['light cone'].includes(itemType)) itemType = 'weapon';
-    const itemSubtype = article.toLowerCase().match(itemType === 'character' && game === 'honkai' ? /\|combattype.*?= ?(.*)/ : weaponSubtypeRegExp)[1];
+    const itemSubtype = article.toLowerCase().match(itemType === 'character' ? characterSubtypeRegExp : weaponSubtypeRegExp)[1];
     const testItemSubtype2 = article.toLowerCase().match(secondSubtypeRegExp) || [null, null];
     const itemSubtype2 = testItemSubtype2[1];
   
