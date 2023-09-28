@@ -59,6 +59,7 @@ function honkaiItems (names) {
 }
 
 async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, secondSubtypeRegExp, searchQuery, searchURLStartIndex, urlVariables) {
+  const fixSubtypes = ['destruction', 'erudition', 'harmony', 'nihility', 'preservation', 'abundance'];
   const sharp = require('sharp');
 
   const fandom = new nodemw({
@@ -118,7 +119,7 @@ async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtype
       continue;
     }
     
-    items.push(await newData.newItem(game, portugueseName, englishName, itemType, itemQuality, imageURL, itemSubtype, itemSubtype2));
+    items.push(await newData.newItem(game, portugueseName, englishName, itemType, itemQuality, imageURL, fixSubtypes.includes(itemSubtype) ? 'the ' + itemSubtype : itemSubtype, fixSubtypes.includes(itemSubtype2) ? 'the ' + itemSubtype2 : itemSubtype2));
   }
   
   return {items, fails};

@@ -2,7 +2,7 @@ const xata = global.xata;
 const Vibrant = require("node-vibrant");
 
 async function newItem (game, name, englishName, type, quality, image, subtype, subtype2, database = xata.db.items, method = 'create') {
-  const subtypes = ['anemo', 'geo', 'electro', 'dendro', 'hydro', 'pyro', 'cryo', 'sword', 'claymore', 'polearm', 'catalyst', 'bow', 'physical', 'fire', 'ice', 'lightning', 'wind', 'quantum', 'imaginary', 'the destruction', 'the hunt', 'the erudition', 'the harmony', 'the nihility', 'the preservation', 'the abundance'];
+  const subtypes = ['anemo', 'geo', 'electro', 'dendro', 'hydro', 'pyro', 'cryo', 'sword', 'claymore', 'polearm', 'catalyst', 'bow', 'physical', 'fire', 'ice', 'lightning', 'wind', 'quantum', 'imaginary', 'preservation', 'the destruction', 'the hunt', 'the erudition', 'the harmony', 'the nihility', 'the preservation', 'the abundance'];
   // formatando dados
   game = game.toLowerCase();
   type = type.toLowerCase();

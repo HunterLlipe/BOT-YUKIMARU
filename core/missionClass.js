@@ -106,7 +106,7 @@ module.exports = class {
     {
       "name": "sendMemes",
       "recurrence": "daily",
-      "instructions": "Poste um meme em qualquer Canal de Meme",
+      "instructions": "Poste uma imagem de meme em qualquer Canal de Meme",
       "points": 1
     },
     {

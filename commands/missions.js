@@ -14,19 +14,19 @@ async function execute(interaction) {
 
   const embed = new EmbedBuilder()
     .setTitle('Expedições de ' + interaction.user.username)
-    .setDescription(`${interaction.user.username} já tem **${user.points} ${user.points > 1 ? 'Pontos de Expedições' : 'Ponto de Expedições'}**!`)
+    .setDescription(`${interaction.user.username} já tem **${user.points} ${user.points > 1 ? 'Pontos de Expedição' : 'Ponto de Expedição'}**!`)
     .setFields({
-        name: 'Diárias',
+        name: 'Expedições Diárias',
         value: Mission.missions.filter(mission => mission.recurrence === 'daily').map(mission => {
           const currentMission = new Mission(...Object.values(mission), interaction.user.id);
-          return `${currentMission.isDone(dailyMissions) ? '✅' : '❌'} ${currentMission.instructions} (${currentMission.points} ${currentMission.points > 1 ? 'Pontos Hunternários' : 'Ponto Hunternário'})`;
+          return `${currentMission.isDone(dailyMissions) ? '✅' : '❌'} ${currentMission.instructions} (${currentMission.points} ${currentMission.points > 1 ? 'Pontos de Expedição' : 'Ponto de Expedição'})`;
         }).join('\n')
       },
       {
-        name: 'Semanais',
+        name: 'Expedições Semanais',
         value: Mission.missions.filter(mission => mission.recurrence === 'weekly').map(mission => {
           const currentMission = new Mission(...Object.values(mission), interaction.user.id);
-          return `${currentMission.isDone(weeklyMissions) ? '✅' : '❌'} ${currentMission.instructions} (${currentMission.points} ${currentMission.points > 1 ? 'Pontos Hunternários' : 'Ponto Hunternário'})`;
+          return `${currentMission.isDone(weeklyMissions) ? '✅' : '❌'} ${currentMission.instructions} (${currentMission.points} ${currentMission.points > 1 ? 'Pontos de Expedição' : 'Ponto de Expedição'})`;
         }).join('\n')
       }
     )
