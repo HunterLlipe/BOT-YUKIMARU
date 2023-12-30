@@ -78,9 +78,13 @@ async function execute(interaction) {
 
   await interaction.reply(game === 'genshin' ? 'https://media3.giphy.com/media/LQ9IaEvO55PrR2bgIA/giphy.gif' : 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTQ5YjU2NThiZjE2ODgzMTFjOGE0NTBkZGQyZmY4MzA2MDdlNmNkOSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/uBEt8qhQ0XbVBP8ftd/giphy.gif');
 
-  let banner = (await xata.db.banners.filter({ command: command.toLowerCase(), game }).getAll())[0];
+  let banner = (await xata.db.banners.search(command.toLowerCase(), {
+      target: ['name', 'command'],
+      filter: {game}
+    }))[0];
+
   if (!banner) {
-    interaction.editReply({content: 'Este banner não existe.', files: []});
+    interaction.editReply({content: 'Este banner não existe.', attachments: [], files: []});
 
     const timestamps = cooldowns.get('roll');
     timestamps.delete(interaction.user.id);

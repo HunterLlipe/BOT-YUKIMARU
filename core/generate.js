@@ -185,7 +185,7 @@ async function banner (game, linkData, templateName) {
   };
   const type = types[(article.toLowerCase().match(/\|type.*?= ?(.*)/)[1])?.trim()];
   const commandNicks = {
-    character: boostedItems[0].split(' ')[1] || boostedItems[0].split(' ')[0],
+    character: boostedItems[0],
     weapon: 'armas',
     standard: 'mochileiro'
   }
