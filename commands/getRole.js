@@ -29,7 +29,7 @@ async function execute(interaction) {
   interaction.editReply({ content: 'Enviando embed do cargo neste canal...', ephemeral: true });
   const channel = interaction.channel;
   const message = await channel.send({embeds: [transformRoleToEmbed(roleData)]});
-  roleData.update({ messageID: message.id });
+  roleData.update({ messageID: message.id, channelID: channel.id });
   message.react(roleData.emoji);
 }
 

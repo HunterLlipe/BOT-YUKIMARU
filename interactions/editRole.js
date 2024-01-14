@@ -14,7 +14,12 @@ async function execute (interaction) {
 
   try {
     const data = await newData.newRole(role.emoji, role.id, title, description, thumbnail, image, color, role, 'update');
-    interaction.update({ embeds: [transformRoleToEmbed(data)] });
+    const embed = transformRoleToEmbed(data);
+    interaction.update({ embeds: [embed] });
+    
+    const channel = await bot.channels.fetch(data.channelID) || await bot.channels.cache.get(data.channelID);
+    const message = await channel.messages.fetch(data.messageID) || await channel.messages.cache.get(data.messageID);
+    message.edit({embeds: [embed]});
   } catch(error) {
     throw error;
   }
