@@ -101,10 +101,10 @@ async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtype
   
     // imagem
     const searchResult = (await ddg.search(name + searchQuery)).results[0];
-    const honeyID = searchResult?.url.slice(searchURLStartIndex, -9);
+    const honeyID = searchResult?.url.slice(searchURLStartIndex).split('/')[0];
     const honeyImageURL = `${urlVariables.host}${urlVariables.itemType[itemType]}${honeyID}_${urlVariables.imageType[itemType]}.webp`; 
     let imageURL;
-
+    
     try {
       // converter imagem para PNG
       const imageFileWEBP = await axios.get(honeyImageURL, {
@@ -165,11 +165,28 @@ async function banner (game, linkData, templateName) {
   if (!article.includes(templateName)) throw "Link inválido ou impossibilidade de gerar banner através dele.";
 
   // itens
-  let itemsAsArray = article.split(templateName)[1].split("}}")[0].replace(/<!--.*?-->\n/g, '').split("|").slice(1).map(item => item.replace("\n", ""));0
-  if (!hostIsPortuguese) itemsAsArray = itemsAsArray.map(item => item.toLowerCase());
-  const generalItems = itemsAsArray.map(item => item.replace(/^\^(.*?)/, '$1'));
-  const boostedItems = itemsAsArray.filter(item => item.startsWith('^')).map(item => item.replace(/^\^(.*?)/, '$1'));
+  let generalItems, boostedItems;
+  if (game === 'genshin' && !hostIsPortuguese) {
+    const itemsAsText = article.split(templateName)[1].split("}}")[0].replace(/<!--.*?-->\n/g, '');
+    const lines = itemsAsText.split('\n').filter(line => line.trim() !== '');
+    let itemsAsObject = {};
 
+    lines.forEach(line => {
+        const parts = line.split('=');
+        const key = parts[0].trim().replace('|', '');
+        const value = parts[1].trim().split(';').map(item => item.trim());
+        itemsAsObject[key] = value.map(e => e.toLowerCase());
+    });
+
+    generalItems = [...itemsAsObject.character_5 || [], ...itemsAsObject.character_4 || [], ...itemsAsObject.weapon_5 || [], ...itemsAsObject.weapon_4 || [], ...itemsAsObject.weapon_3 || []]
+    boostedItems = [...itemsAsObject.character_5_F || [], ...itemsAsObject.character_4_F || [], ...itemsAsObject.weapon_5_F || [], ...itemsAsObject.weapon_4_F || []]
+  } else {
+    let itemsAsArray = article.split(templateName)[1].split("}}")[0].replace(/<!--.*?-->\n/g, '').split("|").slice(1).map(item => item.replace("\n", ""));0
+    if (!hostIsPortuguese) itemsAsArray = itemsAsArray.map(item => item.toLowerCase());
+    generalItems = itemsAsArray.map(item => item.replace(/^\^(.*?)/, '$1'));
+    boostedItems = itemsAsArray.filter(item => item.startsWith('^')).map(item => item.replace(/^\^(.*?)/, '$1'));
+  }
+  
   // dados
   const nameInTheArticle = (article.match(/\|name.*?= ?(.*)/)[1])?.trim();
   const testPortugueseName = article.match(/pt-br:(.*)]]|\|pt.*?= ?(.*?)\n/);
@@ -193,6 +210,6 @@ async function banner (game, linkData, templateName) {
   return await newData.newBanner(game, portugueseName.slice(0, -11), type, commandNicks[type], generalItems, boostedItems, hostIsPortuguese ? 'name' : 'englishName');
 }
 
-// (async () => console.log(await honkaiBanner('https://honkai-star-rail.fandom.com/wiki/Stellar_Warp')))();
+// (async () => console.log(await genshinBanner(`https://genshin-impact.fandom.com/wiki/Oni's_Royale/2024-03-13`)))();
 
 module.exports = { genshinItems, honkaiItems, genshinBanner, honkaiBanner };
