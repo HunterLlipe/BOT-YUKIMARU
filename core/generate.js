@@ -9,6 +9,8 @@ const nodemw = require('nodemw');
 const ddg = require('duck-duck-scrape');
 const axios = require('axios');
 
+// (() => ddg.search('teste').then(e => console.log(e)))()
+
 function genshinItems (names) {
   const host = 'genshin-impact.fandom.com';
   const game = 'genshin';
@@ -42,9 +44,9 @@ function honkaiItems (names) {
   const characterSubtypeRegExp = /\|combattype.*?= ?(.*)/;
   const secondSubtypeRegExp = /\|path.*?= ?(.*)/;
   const searchQuery = ' Honkai Star Rail Database - Honey Hunter';
-  const searchURLStartIndex = 33;
+  const searchURLStartIndex = 38;
   const urlVariables = {
-    host: "https://hsr.honeyhunterworld.com/img/",
+    host: "https://starrail.honeyhunterworld.com/img/",
     itemType: {
       "weapon": "item/",
       "character": "character/"
@@ -98,14 +100,14 @@ async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtype
     const itemSubtype = article.toLowerCase().match(itemType === 'character' ? characterSubtypeRegExp : weaponSubtypeRegExp)[1];
     const testItemSubtype2 = article.toLowerCase().match(secondSubtypeRegExp) || [null, null];
     const itemSubtype2 = testItemSubtype2[1];
-  
-    // imagem
-    const searchResult = (await ddg.search(name + searchQuery)).results[0];
-    const honeyID = searchResult?.url.slice(searchURLStartIndex).split('/')[0];
-    const honeyImageURL = `${urlVariables.host}${urlVariables.itemType[itemType]}${honeyID}_${urlVariables.imageType[itemType]}.webp`; 
     let imageURL;
     
     try {
+      // imagem
+      const searchResult = (await ddg.search(name + searchQuery)).results[0];
+      const honeyID = searchResult?.url.slice(searchURLStartIndex).split('/')[0];
+      const honeyImageURL = `${urlVariables.host}${urlVariables.itemType[itemType]}${honeyID}_${urlVariables.imageType[itemType]}.webp`;
+
       // converter imagem para PNG
       const imageFileWEBP = await axios.get(honeyImageURL, {
         responseType: 'arraybuffer',
@@ -130,7 +132,7 @@ function genshinBanner (link) {
   const linkData = link.match(/^https:\/\/(genshin-impact\.fandom\.com.*?)\/wiki\/(.*)/); 
   const templateName = 'Wish Pool';
 
-  return banner(game, linkData, templateName);
+  return banner(game, linkData, templateName, "weapon");
 }
 
 function honkaiBanner (link) {
@@ -138,10 +140,10 @@ function honkaiBanner (link) {
   const linkData = link.match(/^https:\/\/(honkai-star-rail\.fandom\.com.*?)\/wiki\/(.*)/); 
   const templateName = 'Warp Pool';
 
-  return banner(game, linkData, templateName);
+  return banner(game, linkData, templateName, "lightcone");
 }
 
-async function banner (game, linkData, templateName) {
+async function banner (game, linkData, templateName, weaponLabel) {
   const host = linkData[1];
   const bannerName = decodeURIComponent(linkData[2]);
   const hostIsPortuguese = host.includes('pt-br');
@@ -166,7 +168,7 @@ async function banner (game, linkData, templateName) {
 
   // itens
   let generalItems, boostedItems;
-  if (game === 'genshin' && !hostIsPortuguese) {
+  if (['genshin', 'honkai'].includes(game) && !hostIsPortuguese) {
     const itemsAsText = article.split(templateName)[1].split("}}")[0].replace(/<!--.*?-->\n/g, '');
     const lines = itemsAsText.split('\n').filter(line => line.trim() !== '');
     let itemsAsObject = {};
@@ -178,10 +180,10 @@ async function banner (game, linkData, templateName) {
         itemsAsObject[key] = value.map(e => e.toLowerCase());
     });
 
-    generalItems = [...itemsAsObject.character_5 || [], ...itemsAsObject.character_4 || [], ...itemsAsObject.weapon_5 || [], ...itemsAsObject.weapon_4 || [], ...itemsAsObject.weapon_3 || []]
-    boostedItems = [...itemsAsObject.character_5_F || [], ...itemsAsObject.character_4_F || [], ...itemsAsObject.weapon_5_F || [], ...itemsAsObject.weapon_4_F || []]
+    generalItems = [...itemsAsObject.character_5 || [], ...itemsAsObject.character_4 || [], ...itemsAsObject[weaponLabel + "_5"] || [], ...itemsAsObject[weaponLabel + "_4"] || [], ...itemsAsObject[weaponLabel + "_3"] || []]
+    boostedItems = [...itemsAsObject.character_5_F || [], ...itemsAsObject.character_4_F || [], ...itemsAsObject[weaponLabel + "_5_F"] || [], ...itemsAsObject[weaponLabel + "_4_F"] || []]
   } else {
-    let itemsAsArray = article.split(templateName)[1].split("}}")[0].replace(/<!--.*?-->\n/g, '').split("|").slice(1).map(item => item.replace("\n", ""));0
+    let itemsAsArray = article.split(templateName)[1].split("}}")[0].replace(/<!--.*?-->\n/g, '').split("|").slice(1).map(item => item.replace("\n", ""));
     if (!hostIsPortuguese) itemsAsArray = itemsAsArray.map(item => item.toLowerCase());
     generalItems = itemsAsArray.map(item => item.replace(/^\^(.*?)/, '$1'));
     boostedItems = itemsAsArray.filter(item => item.startsWith('^')).map(item => item.replace(/^\^(.*?)/, '$1'));

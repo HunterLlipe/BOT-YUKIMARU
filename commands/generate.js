@@ -40,7 +40,7 @@ async function execute (interaction) {
     const response = await generate[game + "Items"](items);
     const embeds = response.items.length > 10 ? [] : await Promise.all(response.items.map(async (item) => await transformItemToEmbed(item)));
     interaction.editReply({
-      content: `**Falhas:** ${response.fails.length > 0 ? response.fails.join(', ') : 'Nenhuma falha.'}\n**Cadastrados:** ${response.items.length <= 10 ? '' : response.items.map(item => item.name).join(', ')}`, 
+      content: `**Falhas:** ${response.fails.length > 0 ? response.fails.join(';') : 'Nenhuma falha.'}\n**Cadastrados:** ${response.items.length <= 10 ? '' : response.items.map(item => item.name).join(', ')}`, 
       embeds: embeds
     });
   } else if (chosenCommand === 'banner') {
