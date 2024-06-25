@@ -7,8 +7,8 @@ const properties = new SlashCommandBuilder()
   .setDMPermission(false)
   .addStringOption((option) =>
     option
-      .setName("id")
-      .setDescription("ID da mensagem a ser editada.")
+      .setName("link")
+      .setDescription("Link da mensagem a ser editada.")
       .setRequired(true)
   )
   .addStringOption((option) =>
@@ -29,8 +29,8 @@ async function execute(interaction) {
     return;
   } 
 
-  const messageID = interaction.options.getString('id').split('-').at(-1);
-  const channelID = interaction.options.getString('id').split('-').at(0);
+  const messageID = interaction.options.getString('link').split('/').at(-1);
+  const channelID = interaction.options.getString('link').split('/').at(-2);
   let text = interaction.options.getString('texto');
   const file = interaction.options.getAttachment('arquivo');
   const isEmbed = file?.name.toLowerCase().endsWith(".json");
