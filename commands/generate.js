@@ -15,6 +15,7 @@ const properties = new SlashCommandBuilder()
       .addStringOption(option => option.setName('jogo').setDescription('Jogo em que os itens estão.').addChoices(
         { name: 'Genshin Impact', value: 'genshin' },
         { name: 'Honkai: Star Rail', value: 'honkai' },
+        { name: 'Zenless Zone Zero', value: 'zzz' }
       ).setRequired(true))
       .addStringOption(option => option.setName('link').setDescription('Link para basear o cadastro').setRequired(true)))
   .addSubcommand(subcommand =>
@@ -24,6 +25,7 @@ const properties = new SlashCommandBuilder()
       .addStringOption(option => option.setName('jogo').setDescription('Jogo em que os itens estão.').addChoices(
         { name: 'Genshin Impact', value: 'genshin' },
         { name: 'Honkai: Star Rail', value: 'honkai' },
+        { name: 'Zenless Zone Zero', value: 'zzz' }
       ).setRequired(true))
       .addStringOption(option => option.setName('lista').setDescription('Lista de itens para serem cadastrados.').setRequired(true)));
 
@@ -45,14 +47,22 @@ async function execute (interaction) {
     });
   } else if (chosenCommand === 'banner') {
     const rawLink = interaction.options.getString('link');
-    const link = game === 'genshin' ? rawLink.match(/^https:\/\/genshin-impact\.fandom\.com.*?\/wiki\/(.*)/) : rawLink.match(/^https:\/\/honkai-star-rail\.fandom\.com.*?\/wiki\/(.*)/);
+    let link;
+    if (game === 'genshin') {
+      link = rawLink.match(/^https:\/\/genshin-impact\.fandom\.com.*?\/wiki\/(.*)/);
+    } else if (game === 'honkai') {
+      link = rawLink.match(/^https:\/\/honkai-star-rail\.fandom\.com.*?\/wiki\/(.*)/);
+    } else {
+      link = rawLink.match(/^https:\/\/zenless-zone-zero\.fandom\.com.*?\/wiki\/(.*)/);
+    }
+
     if (!link) throw "Link inválido ou impossibilidade de gerar banner através dele.";
 
     const response = await generate[game + "Banner"](rawLink);
     const banner = await response.banner;
     const embed = await transformBannerToEmbed(banner);
     interaction.editReply({
-      content: `**Falhas:** ${response.fails.length > 0 ? response.fails.map(item => lodash.startCase(item)).join(';') : 'Nenhuma falha.'}\n**Banner cadastrado:**`, 
+      content: `**Falhas:** ${response.fails.length > 0 ? response.fails.map(item => item).join(';') : 'Nenhuma falha.'}\n**Banner cadastrado:**`, 
       embeds: [embed]
     });
   }

@@ -18,7 +18,8 @@ const properties = new SlashCommandBuilder()
           .setDescription("Jogo em que o item está.")
           .addChoices(
             { name: "Genshin Impact", value: "genshin" },
-            { name: "Honkai: Star Rail", value: "honkai" }
+            { name: "Honkai: Star Rail", value: "honkai" },
+            { name: "Zenless Zone Zero", value: "zzz" }
           )
           .setRequired(true)
       )
@@ -113,7 +114,8 @@ const properties = new SlashCommandBuilder()
           .setDescription("Jogo em que o item está.")
           .addChoices(
             { name: "Genshin Impact", value: "genshin" },
-            { name: "Honkai: Star Rail", value: "honkai" }
+            { name: "Honkai: Star Rail", value: "honkai" },
+            { name: "Zenless Zone Zero", value: "zzz" }
           )
           .setRequired(true)
       )
@@ -424,6 +426,96 @@ async function autocomplete(interaction) {
       value: "the abundance",
       game: "honkai",
       type: "weapon"
+    },
+    {
+      name: "Ataque",
+      value: "attack",
+      game: "zzz",
+      type: "character"
+    },
+    {
+      name: "Atordoar",
+      value: "stun",
+      game: "zzz",
+      type: "character"
+    },
+    {
+      name: "Anomalia",
+      value: "anomaly",
+      game: "zzz",
+      type: "character"
+    },
+    {
+      name: "Suporte",
+      value: "support",
+      game: "zzz",
+      type: "character"
+    },
+    {
+      name: "Defesa",
+      value: "defense",
+      game: "zzz",
+      type: "character"
+    },
+    {
+      name: "Ataque",
+      value: "attack",
+      game: "zzz",
+      type: "weapon"
+    },
+    {
+      name: "Atordoar",
+      value: "stun",
+      game: "zzz",
+      type: "weapon"
+    },
+    {
+      name: "Anomalia",
+      value: "anomaly",
+      game: "zzz",
+      type: "weapon"
+    },
+    {
+      name: "Suporte",
+      value: "support",
+      game: "zzz",
+      type: "weapon"
+    },
+    {
+      name: "Defesa",
+      value: "defense",
+      game: "zzz",
+      type: "weapon"
+    },
+    {
+      name: "Fogo",
+      value: "fire",
+      game: "zzz",
+      type: "character"
+    },
+    {
+      name: "Eletricidade",
+      value: "electric",
+      game: "zzz",
+      type: "character"
+    },
+    {
+      name: "Gelo",
+      value: "ice",
+      game: "zzz",
+      type: "character"
+    },
+    {
+      name: "Físico",
+      value: "physical",
+      game: "zzz",
+      type: "character"
+    },
+    {
+      name: "Éter",
+      value: "ether",
+      game: "zzz",
+      type: "character"
     }
   ];
   let filtered = choices.filter(choice => choice.name.toLowerCase().startsWith(focusedValue.toLowerCase()));

@@ -11,7 +11,8 @@ const properties = new SlashCommandBuilder()
       .setDescription("Jogo em que o banner está.")
       .addChoices(
         { name: "Genshin Impact", value: "genshin" },
-        { name: "Honkai: Star Rail", value: "honkai" }
+        { name: "Honkai: Star Rail", value: "honkai" },
+        { name: "Zenless Zone Zero", value: "zzz" }
       )
   )
   .addStringOption((option) =>

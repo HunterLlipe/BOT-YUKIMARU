@@ -2,21 +2,21 @@ const xata = global.xata;
 const Vibrant = require("node-vibrant");
 
 async function newItem (game, name, englishName, type, quality, image, subtype, subtype2, database = xata.db.items, method = 'create') {
-  const subtypes = ['anemo', 'geo', 'electro', 'dendro', 'hydro', 'pyro', 'cryo', 'sword', 'claymore', 'polearm', 'catalyst', 'bow', 'physical', 'fire', 'ice', 'lightning', 'wind', 'quantum', 'imaginary', 'preservation', 'the destruction', 'the hunt', 'the erudition', 'the harmony', 'the nihility', 'the preservation', 'the abundance'];
+  const subtypes = ['anemo', 'geo', 'electro', 'dendro', 'hydro', 'pyro', 'cryo', 'sword', 'claymore', 'polearm', 'catalyst', 'bow', 'physical', 'fire', 'ice', 'lightning', 'wind', 'quantum', 'imaginary', 'preservation', 'the destruction', 'the hunt', 'the erudition', 'the harmony', 'the nihility', 'the preservation', 'the abundance', "attack", "stun", "anomaly", "support", "defense", "fire", "electric", "ice", "physical", "ether"];
   // formatando dados
-  game = game.toLowerCase();
-  type = type.toLowerCase();
-  subtype = subtype.toLowerCase();
-  subtype2 = subtype2?.toLowerCase();
+  game = game.toLowerCase().trim();
+  type = type?.toLowerCase().trim();
+  subtype = subtype?.toLowerCase().trim();
+  subtype2 = subtype2?.toLowerCase().trim();
   quality = parseInt(quality);
 
   // conferindo dados
-  if (!["honkai", "genshin"].includes(game)) throw "Jogo inexistente.";
-  if (!["weapon", "character"].includes(type)) throw "Tipo de item inexistente.";
-  if (!subtypes.includes(subtype)) throw "Subtipo de item inexistente.";
-  if (subtype2 && !subtypes.includes(subtype2)) throw "Subtipo 2 de item inexistente.";
-  if (isNaN(quality)) throw "Quantidade de estrelas não é um número.";
-  if (quality < 1 || quality > 5) throw "Quantidade de estrelas errada.";
+  if (!["honkai", "genshin", "zzz"].includes(game)) throw `Jogo inexistente para item ${name}.`;
+  if (!["weapon", "character"].includes(type)) throw `Tipo de item inexistente para item ${name}.`;
+  if (!subtypes.includes(subtype)) throw `Subtipo de item inexistente para item ${name}.`;
+  if (subtype2 && !subtypes.includes(subtype2)) throw `Subtipo 2 de item inexistente para item ${name}.`;
+  if (isNaN(quality)) throw `Quantidade de estrelas não é um número para item ${name}.`;
+  if (quality < 1 || quality > 5) throw `Quantidade de estrelas errada para item ${name}.`;
   
   return database[method]({
     game: game,
@@ -33,24 +33,24 @@ async function newItem (game, name, englishName, type, quality, image, subtype, 
 async function newBanner (game, name, type, command, generalItems, boostedItems, nameColumn = 'name', database = xata.db.banners, method = 'create') {
   // formatando dados
   game = game.toLowerCase();
-  type = type.toLowerCase();
-  command = command.toLowerCase();
+  type = type?.toLowerCase();
+  command = command?.toLowerCase();
 
   // conferindo dados
-  if (!["honkai", "genshin"].includes(game)) throw "Jogo inexistente.";
+  if (!["honkai", "genshin", "zzz"].includes(game)) throw "Jogo inexistente.";
   if (!["weapon", "character", "standard"].includes(type)) throw "Tipo de banner inexistente.";
-
+  
 	const itemsData = await xata.db.items.filter({
     game: game,
     $any: {
       name: { $any: [...generalItems, ...boostedItems] },
-      englishName: { $any: [...generalItems, ...boostedItems] }
+      englishName: { $any: [...generalItems.map(e => e.toLowerCase()), ...boostedItems.map(e => e.toLowerCase())] }
     }
   }).select(["name", "englishName", "id"]).getAll();
   const generalItemsIDs = itemsData.map(item => item.id);
-  const boostedItemsIDs = itemsData.filter(item => boostedItems.includes(item[nameColumn])).map(item => item.id);
-  const fails = [...generalItems, ...boostedItems].filter(item => !itemsData.map(item => item[nameColumn]).includes(item));
-
+  const boostedItemsIDs = itemsData.filter(item => boostedItems.map(e => e.toLowerCase()).includes(item[nameColumn].toLowerCase())).map(item => item.id);
+  const fails = [...generalItems, ...boostedItems].filter(item => !itemsData.map(item => item[nameColumn].toLowerCase()).includes(item.toLowerCase())).filter(item => item);
+  
   const banner = database[method]({
     name: name,
     type: type,

@@ -17,6 +17,7 @@ const properties = new SlashCommandBuilder()
       .addChoices(
         { name: 'Genshin Impact', value: 'genshin' },
         { name: 'Honkai: Star Rail', value: 'honkai' },
+        { name: 'Zenless Zone Zero', value: 'zzz' }
       )
       .setRequired(true)
   )
@@ -65,18 +66,35 @@ let usageCount = {
 async function execute(interaction) {
   const command = interaction.options.getString('apelido');
   const game = interaction.options.getString('jogo');
+  const gifsGame = {
+    four: {
+      genshin: 'https://media3.giphy.com/media/LQ9IaEvO55PrR2bgIA/giphy.gif',
+      honkai: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTQ5YjU2NThiZjE2ODgzMTFjOGE0NTBkZGQyZmY4MzA2MDdlNmNkOSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/uBEt8qhQ0XbVBP8ftd/giphy.gif',
+      zzz: 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGgybzlwd3pqYWhzOWZzYWI1NGt4bmZkOXp1aHVoc3IzbmkyaHhicCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Gk4HpiY82k04KNRo9G/giphy.gif'
+    },
+    five: {
+      genshin: 'https://media3.giphy.com/media/orSLaW9ZelYrsi1aWy/giphy.gif',
+      honkai: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmZlMjRjYWRiOTkwZTRiMGViMWNkODU2ZThiMzJkN2U5YjNkZDEwYiZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/YuyimGNT4ZBV5qIBgm/giphy-downsized-large.gif',
+      zzz: 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExanJrOG43eDZuc3R4OG9kOGh3bHI2dmlyYWJoZTU4dXp2NzZ5NjlidiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/pxsCoFmkne3hTxum0A/giphy.gif'
+    }
+  }
 
-  if (game === 'honkai' && interaction.channelId == '844220451785146439') {
+  if (game === 'honkai' && ['844220451785146439'].includes(interaction.channelId)) {
     interaction.reply({content: 'Ei, não simule passes de Honkai: Star Rail neste canal!', ephemeral: true});
     return;
   }
 
-  if (game === 'genshin' && interaction.channelId == '1116458669895340173') {
+  if (game === 'genshin' && ['1116458669895340173'].includes(interaction.channelId)) {
     interaction.reply({content: 'Ei, não simule passes de Genshin Impact neste canal!', ephemeral: true});
     return;
   }
 
-  await interaction.reply(game === 'genshin' ? 'https://media3.giphy.com/media/LQ9IaEvO55PrR2bgIA/giphy.gif' : 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTQ5YjU2NThiZjE2ODgzMTFjOGE0NTBkZGQyZmY4MzA2MDdlNmNkOSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/uBEt8qhQ0XbVBP8ftd/giphy.gif');
+  if (game === 'zzz' && ['844220451785146439', '1116458669895340173'].includes(interaction.channelId)) {
+    interaction.reply({content: 'Ei, não simule passes de Zenless Zone Zero neste canal!', ephemeral: true});
+    return;
+  }
+
+  await interaction.reply(gifsGame.four[game]);
 
   let banner = (await xata.db.banners.search(command.toLowerCase(), {
       target: ['name', 'command'],
@@ -108,7 +126,7 @@ async function execute(interaction) {
   if (inventory) lastStarWasBoosted = JSON.parse(inventory.lastStarWasBoosted);
 
   const { wish } = wishCore.wishTenItemsAndSort(banner, streakWithout, lastStarWasBoosted);
-  if (wish.find(item => item.quality === 5)) interaction.editReply(game === 'genshin' ? 'https://media3.giphy.com/media/orSLaW9ZelYrsi1aWy/giphy.gif' : 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmZlMjRjYWRiOTkwZTRiMGViMWNkODU2ZThiMzJkN2U5YjNkZDEwYiZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/YuyimGNT4ZBV5qIBgm/giphy-downsized-large.gif');
+  if (wish.find(item => item.quality === 5)) interaction.editReply(gifsGame.four[game]);
 
   // atualizar banco de dados
   usageCount[banner.type] += 10;

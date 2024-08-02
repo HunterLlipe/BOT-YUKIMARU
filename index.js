@@ -6,9 +6,9 @@
   Meus sinceros agradecimentos ao Llipe e ao Renan que apoiaram esse projeto e confiaram em mim para realizá-lo.
 
   Para tentar tirar qualquer dúvida quanto ao código, contato:
-  DISCORD: enzon19#9325 | E-MAIL: contato@enzon19.com
+  DISCORD: @enzon19 | E-MAIL: contato@enzon19.com
 
-  Versão atual: 4.0.0
+  Versão atual: 4.1.0
 
 */
 

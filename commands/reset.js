@@ -10,6 +10,7 @@ const properties = new SlashCommandBuilder()
       .addChoices(
         { name: 'Genshin Impact', value: 'genshin' },
         { name: 'Honkai: Star Rail', value: 'honkai' },
+        { name: 'Zenless Zone Zero', value: 'zzz' }
       )
       .setRequired(true)
   )

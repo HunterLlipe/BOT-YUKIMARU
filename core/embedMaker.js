@@ -30,43 +30,82 @@ async function transformItemToEmbed(item) {
     "the harmony": "A Harmonia",
     "the nihility": "A Inexistência",
     "the preservation": "A Preservação",
-    "the abundance": "A Abundância"
+    "the abundance": "A Abundância",
+    attack: "Ataque",
+    stun: "Atordoar",
+    anomaly: "Anomalia",
+    support: "Suporte",
+    defense: "Defesa",
+    fire: "Fogo",
+    electric: "Eletricidade",
+    ice: "Gelo",
+    physical: "Físico",
+    ether: "Éter",
   };
 
   const typePortuguese = {
-    weapon: "Arma",
-    character: "Personagem"
+    "genshin": {
+      weapon: "Arma",
+      character: "Personagem"
+    },
+    "honkai": {
+      weapon: "Arma",
+      character: "Personagem"
+    },
+    "zzz": {
+      weapon: "W-Engine",
+      character: "Agente"
+    },
   };
   const subtypePortugueseLabel = {
-    weapon: "Tipo",
-    character: "Visão/Elemento"
+    "genshin": {
+      weapon: "Tipo",
+      character: "Visão"
+    },
+    "honkai": {
+      weapon: "Tipo",
+      character: "Elemento"
+    },
+    "zzz": {
+      weapon: "Especialidade",
+      character: "Estilo"
+    },
   };
   const subtype2PortugueseLabel = {
-    weapon: "Subtipo 2",
-    character: "Classe"
+    "genshin": {
+      weapon: "Subtipo 2",
+      character: "Classe"
+    },
+    "honkai": {
+      weapon: "Subtipo 2",
+      character: "Classe"
+    },
+    "zzz": {
+      weapon: "Subtipo 2",
+      character: "Atributo"
+    },
   };
 
   const palette = await Vibrant.from(item.image).getPalette();
   const itemEmbed = new EmbedBuilder()
     .setColor(palette.Vibrant.hex)
     .setTitle(item.name)
-    .setDescription(typePortuguese[item.type])
+    .setDescription(typePortuguese[item.game][item.type])
     .addFields(
       { 
         name: "Qualidade",
-        value: item.quality.toString(), 
+        value: item.game === 'zzz' ? ['C', 'B', 'A', 'S'][item.quality - 2] : item.quality.toString(), 
         inline: true 
       },
       {
-        name: subtypePortugueseLabel[item.type],
+        name: subtypePortugueseLabel[item.game][item.type],
         value: subtypePortuguese[item.subtype],
         inline: true,
       }
     )
     .setImage(item.image);
 
-  if (item.subtype2) itemEmbed.addFields({ name: subtype2PortugueseLabel[item.type], value: subtypePortuguese[item.subtype2], inline: true });
-
+  if (item.subtype2) itemEmbed.addFields({ name: subtype2PortugueseLabel[item.game][item.type], value: subtypePortuguese[item.subtype2], inline: true });
   return itemEmbed;
 }
 
@@ -74,7 +113,7 @@ async function transformBannerToEmbed(banner) {
   const typePortuguese = {
     weapon: "Arma",
     character: "Personagem",
-    standard: "Mochileiro"
+    standard: "Mochileiro/Padrão"
   };
 
   const generalItems = (await xata.db.items.read(banner.generalItems)).filter(item => item);
@@ -119,7 +158,17 @@ async function transformWishToEmbed(items, interaction, banner, inventory) {
     "the harmony": "<:AHarmonia:1102813455087587368>",
     "the nihility": "<:AInexistencia:1102813674990735412>",
     "the preservation": "<:APreservacao:1102813734071717888>",
-    "the abundance": "<:AAbundancia:1102813399148134443>"
+    "the abundance": "<:AAbundancia:1102813399148134443>",
+    attack: ":white_circle:",
+    stun: ":white_circle:",
+    anomaly: ":white_circle:",
+    support: ":white_circle:",
+    defense: ":white_circle:",
+    fire: ":white_circle:",
+    electric: ":white_circle:",
+    ice: ":white_circle:",
+    physical: ":white_circle:",
+    ether: ":white_circle:",
   };
   const guaranteeWishIndex = {
     'character': 90,
@@ -129,18 +178,26 @@ async function transformWishToEmbed(items, interaction, banner, inventory) {
   const footerLabel = () => {
     return {
       genshin: `Esse foi sua ${JSON.parse(inventory.usageCount)[banner.type]}ª Oração. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} Orações para ${['character', 'standard'].includes(banner.type) ? 'um Personagem 5-estrelas garantido.' : 'uma Arma 5-estrelas garantida.'}`,
-      honkai: `Esse foi seu ${JSON.parse(inventory.usageCount)[banner.type]}º Passe. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} Passes para ${['character', 'standard'].includes(banner.type) ? 'um Personagem 5-estrelas garantido.' : 'uma Arma 5-estrelas garantida.'}`
+      honkai: `Esse foi seu ${JSON.parse(inventory.usageCount)[banner.type]}º Passe. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} Passes para ${['character', 'standard'].includes(banner.type) ? 'um Personagem 5-estrelas garantido.' : 'uma Arma 5-estrelas garantida.'}`,
+      zzz: `Esse foi seu ${JSON.parse(inventory.usageCount)[banner.type]}º Busca de Sinal. Faltam ${guaranteeWishIndex[banner.type] - JSON.parse(inventory.streakWithout)[banner.type][5]} Buscas de Sinal para ${['character', 'standard'].includes(banner.type) ? 'um Agente classificação S garantido.' : 'um Motor-W classificação A garantido.'}`
     }
   }
   
   const formattedItems = items.map(item => {
-    const itemText = `[${item.quality}★] ${subtypeEmoji[item.subtype]}${item.subtype2 ? subtypeEmoji[item.subtype2] : ''} ${item.name}`;
+    let itemText;
+
+    if (item.game !== "zzz") {
+      itemText = `[${item.quality}★] ${subtypeEmoji[item.subtype]}${item.subtype2 ? subtypeEmoji[item.subtype2] : ''} ${item.name}`;
+    } else {
+      itemText = `[${['C', 'B', 'A', 'S'][item.quality - 2]}] ${subtypeEmoji[item.subtype]}${item.subtype2 ? subtypeEmoji[item.subtype2] : ''} ${item.name}`;
+    }
+
     return item.quality === 5 ? `**${itemText}**` : itemText;
   });
   const result = lodash.chunk(formattedItems, 5);
   const itemEmbed = new EmbedBuilder()
     .setColor('#e22618')
-    .setTitle(`Resultado ${banner.game === 'genshin' ? 'da Oração' : 'do Passe'} de ` + interaction.user.username)
+    .setTitle(`Resultado ${({genshin: 'da Oração', honkai: 'do Passe', zzz: 'da Busca de Sinal'})[banner.game]} de ` + interaction.user.username)
     .setThumbnail(interaction.user.avatarURL())
     .addFields({ name: banner.name, value: result[0].join('\n'), inline: true }, { name: '\u200b', value: result[1].join('\n'), inline: true })
     
@@ -163,7 +220,7 @@ function transformRoleToEmbed(role) {
 // esperando lançar ARRAY.group... enquanto isso, código roubado (e adaptado)
 function groupByProperty(array, property, boosted = false) {
   const groupedItems = array.reduce((result, item) => {
-    const key = `[${boosted ? '🆙 ' : ''}${item[property]}★]`;
+    const key = `[${boosted ? '🆙 ' : ''}${['zzz'].includes(item.game) ? ['C', 'B', 'A', 'S'][item.quality - 2] : item[property]}${['zzz'].includes(item.game) ? '' : '★'}]`;
     if (!result[key]) {
       result[key] = [];
     }
@@ -186,7 +243,13 @@ function compare(a, b) {
     '[4★]': 3,
     '[5★]': 4,
     '[🆙 4★]': 5,
-    '[🆙 5★]': 6
+    '[🆙 5★]': 6,
+    '[C]': 7,
+    '[B]': 8,
+    '[A]': 9,
+    '[S]': 10,
+    '[🆙 A]': 11,
+    '[🆙 S]': 12
   };
 
   const aOrder = sortOrder[a.name];

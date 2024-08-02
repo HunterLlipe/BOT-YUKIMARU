@@ -318,6 +318,46 @@ async function generateItemImage(item) {
   return itemBackgroundCanvas;
 }
 
+async function zzzWishImage(items) {
+  const resourcesFolder = './resources/zzz';
+
+  // Dimensões
+  const imageXPosition = (i) => {return 88 + (352 * (i % 5))};
+  const imageYPosition = (i) => {return i < 5 ? 306 : 546};
+  const imageWidth = 339;
+  const imageHeight = 229;
+
+  const rankXPosition = (i) => {return 110 + (352 * (i % 5))};
+  const rankYPosition = (i) => {return i < 5 ? 429 : 670};
+  const rankWidth = 82;
+  const rankHeight = 83;
+
+  // Criar canvas principal e botar background
+  const background = await loadImage(`${resourcesFolder}/background.png`);
+  const mainCanvas = createCanvas(background.width, background.height);
+  const mainContext = mainCanvas.getContext('2d');
+  mainContext.drawImage(background, 0, 0);
+
+  // Carregar as imagens do resultado do roll e colocá-las lado a lado
+  for (i = 0; i < 10; i++) {
+    const currentItem = items[i];
+    
+    const itemImage = await loadImage(getZZZFixedURL(currentItem));
+    mainContext.drawImage(itemImage, imageXPosition(i), imageYPosition(i), imageWidth, imageHeight);
+
+    const rankImage = await loadImage(`${resourcesFolder}/ranks/rank` + currentItem.quality + '.png');
+    mainContext.drawImage(rankImage, rankXPosition(i), rankYPosition(i), rankWidth, rankHeight);
+  }
+
+  // Botar uma imagem por cima para tampar as rebarbas
+  const imageOver = await loadImage(`${resourcesFolder}/backgroundOver.png`);
+  mainContext.drawImage(imageOver, 0, 0);
+
+  // Retornar imagem final
+  const buffer = mainCanvas.toBuffer('image/png');
+  return buffer;
+}
+
 function getHonkaiFixedURL(item) {
   if (!item.image.startsWith('https://res.cloudinary.com/duwng4tki/image/upload')) return item.image;
 
@@ -333,4 +373,12 @@ function getGenshinFixedURL(item) {
   if (item.type === 'character') return 'https://res.cloudinary.com/duwng4tki/image/upload/c_thumb,g_south,h_500,w_120' + imageData;
 }
 
-module.exports = { wishTenItemsAndSort, genshinWishImage, honkaiWishImage }
+function getZZZFixedURL(item) {
+  if (!item.image.startsWith('https://res.cloudinary.com/duwng4tki/image/upload')) return item.image;
+
+  const imageData = item.image.slice(49);
+  if (item.type === 'weapon') return 'https://res.cloudinary.com/duwng4tki/image/upload/c_pad,h_229,w_339' + imageData;
+  if (item.type === 'character') return 'https://res.cloudinary.com/duwng4tki/image/upload/c_thumb,g_north,h_229,w_339' + imageData;
+}
+
+module.exports = { wishTenItemsAndSort, genshinWishImage, honkaiWishImage, zzzWishImage }
