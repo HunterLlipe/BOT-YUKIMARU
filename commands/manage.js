@@ -405,7 +405,7 @@ async function autocomplete(interaction) {
       type: "character"
     },
     {
-      name: "Eletricidade",
+      name: "Elétrico",
       value: "electric",
       game: "zzz",
       type: "character"
