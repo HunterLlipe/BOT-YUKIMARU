@@ -189,7 +189,11 @@ async function transformWishToEmbed(items, interaction, banner, inventory) {
     if (item.game !== "zzz") {
       itemText = `[${item.quality}★] ${subtypeEmoji[item.subtype]}${item.subtype2 ? subtypeEmoji[item.subtype2] : ''} ${item.name}`;
     } else {
-      itemText = `[${['C', 'B', 'A', 'S'][item.quality - 2]}] ${subtypeEmoji[item.subtype]}${item.subtype2 ? subtypeEmoji[item.subtype2] : ''} ${item.name}`;
+      const zzzEmojis = {
+        'character': ['C', 'B', '<:ZZZ_ranka:1272412595072008193>', '<:ZZZ_ranks:1272410135402123355>'],
+        'weapon': ['C', '<:ZZZ_armarankb:1272609504831340619>', '<:ZZZ_armaranka:1272609719252680744>', '<:ZZZ_armarankbs:1272609750537867275>']
+      };
+      itemText = `[${zzzEmojis[item.type][item.quality - 2]}] ${subtypeEmoji[item.subtype]}${item.subtype2 ? subtypeEmoji[item.subtype2] : ''} ${item.name}`;
     }
 
     return item.quality === 5 ? `**${itemText}**` : itemText;
