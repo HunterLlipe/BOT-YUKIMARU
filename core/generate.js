@@ -40,7 +40,7 @@ function zzzItems (names) {
   const qualityRegExp = /\|rank.*?= ?(.*)/;
   const typeRegExp = /agent|w-engine/;
   const weaponSubtypeRegExp = /\|specialty.*?= ?(.*)/;
-  const characterSubtypeRegExp = /\|attacktype.*?= ?(.*)/;
+  const characterSubtypeRegExp = /\|specialty.*?= ?(.*)/;
   const secondSubtypeRegExp = /\|attribute.*?= ?(.*)/;
 
   return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, secondSubtypeRegExp, zzzImage);

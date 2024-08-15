@@ -325,12 +325,6 @@ async function autocomplete(interaction) {
       value: "ether",
       game: "zzz",
       type: "character"
-    },
-    {
-      name: "Batida",
-      value: "strike",
-      game: "zzz",
-      type: "character"
     }
   ];
   let filtered = choices.filter(choice => choice.name.toLowerCase().startsWith(focusedValue.toLowerCase()));
