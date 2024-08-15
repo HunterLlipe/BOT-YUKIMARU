@@ -345,7 +345,7 @@ async function zzzWishImage(items) {
     const itemImage = await loadImage(getZZZFixedURL(currentItem));
     mainContext.drawImage(itemImage, imageXPosition(i), imageYPosition(i), imageWidth, imageHeight);
 
-    const rankImage = await loadImage(`${resourcesFolder}/ranks/rank` + currentItem.quality + '.png');
+    const rankImage = await loadImage(`${resourcesFolder}/ranks/rank${currentItem.quality}_${currentItem.type}.png`);
     mainContext.drawImage(rankImage, rankXPosition(i), rankYPosition(i), rankWidth, rankHeight);
   }
 
