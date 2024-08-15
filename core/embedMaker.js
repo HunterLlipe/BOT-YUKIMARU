@@ -41,6 +41,7 @@ async function transformItemToEmbed(item) {
     ice: "Gelo",
     physical: "Físico",
     ether: "Éter",
+    strike: "Batida",
   };
 
   const typePortuguese = {
@@ -169,6 +170,7 @@ async function transformWishToEmbed(items, interaction, banner, inventory) {
     ice: "<:ZZZ_gelo:1272414853117644864>",
     physical: "<:ZZZ_fsico:1272410683593592924>",
     ether: "<:ZZZ_ter:1272410628828696647>",
+    strike: "🟠",
   };
   const guaranteeWishIndex = {
     'character': 90,
