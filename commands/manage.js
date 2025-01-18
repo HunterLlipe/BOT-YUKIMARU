@@ -98,11 +98,11 @@ async function execute(interaction) {
   if (chosenCommand === "item") {
     await interaction.deferReply();
     
-    const name = interaction.options.getString('nome');
+    const name = interaction.options.getString('nome') || undefined;
     const options = interaction.options.data[0].options;
     const filters = options.filter(option => !['nome'].includes(option.name));
-    const xataFilter = {page: { size: 200, offset: 0 }};
-    if (filters.length > 0) xataFilter.filter = {};
+    const xataFilter = {};
+    
     const column = {
       'jogo': 'game',
       'tipo': 'type',
@@ -111,10 +111,12 @@ async function execute(interaction) {
     };
   
     for (const option of filters) {
-      xataFilter.filter[column[option.name]] = option.value;
+      xataFilter[column[option.name]] = option.value;
     }
 
-    const items = await xata.db.items.search(name, xataFilter);
+    let query = xata.db.items;
+    if (filters.length > 0 || name) query = query.filter({ $all: { name, ...xataFilter } });
+    const items = await query.getAll();
     
     if (items.length > 0) {
       const dropdown = transformDataToDropdown(items, 0, 'manageItem', 'Selecionar um item...');
@@ -125,21 +127,23 @@ async function execute(interaction) {
   } else if (chosenCommand === "banner") {
     await interaction.deferReply();
 
-    const name = interaction.options.getString('nome');
+    const name = interaction.options.getString('nome') || undefined;
     const options = interaction.options.data[0].options;
     const filters = options.filter(option => !['nome'].includes(option.name));
-    const xataFilter = {page: { size: 200, offset: 0 }};
-    if (filters.length > 0) xataFilter.filter = {};
+    const xataFilter = {};
+    
     const column = {
       'jogo': 'game',
       'tipo': 'type'
     };
   
     for (const option of filters) {
-      xataFilter.filter[column[option.name]] = option.value;
+      xataFilter[column[option.name]] = option.value;
     }
   
-    const banners = await xata.db.banners.search(name, xataFilter);
+    let query = xata.db.banners;
+    if (filters.length > 0 || name) query = query.filter({ $all: { name, ...xataFilter } });
+    const banners = await query.getAll();
     
     if (banners.length > 0) {
       const dropdown = transformDataToDropdown(banners, 0, 'manageBanner', 'Selecionar um banner...');

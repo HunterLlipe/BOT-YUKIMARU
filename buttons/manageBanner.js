@@ -16,14 +16,17 @@ async function execute (interaction, page) {
 
   // fazer o que se faz pro xata funcionar
   const filters = filtersAsObject.filter(option => !['name'].includes(option.name));
-  const xataFilter = {page: { size: 200, offset: 0 }};
-  if (filters.length > 0) xataFilter.filter = {};
+  const xataFilter = {};
+  
   for (const option of filters) {
-    xataFilter.filter[option.name] = option.value;
+    xataFilter[option.name] = option.value;
   }
 
-  const name = (filtersAsObject.find(filter => filter.name === "name"))?.value || null;
-  const banners = await xata.db.banners.search(name, xataFilter);
+  const name = (filtersAsObject.find(filter => filter.name === "name"))?.value || undefined;
+  
+  let query = xata.db.banners;
+  if (filters.length > 0 || name) query = query.filter({ $all: { name, ...xataFilter } });
+  const banners = await query.getAll();
 
   if (banners.length > 0) {
     const dropdown = transformDataToDropdown(banners, page, 'manageBanner', 'Selecionar um banner...');

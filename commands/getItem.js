@@ -46,11 +46,11 @@ const properties = new SlashCommandBuilder()
 async function execute(interaction) {
   await interaction.deferReply();
 
-  const name = interaction.options.getString('nome');
+  const name = interaction.options.getString('nome') || undefined;
   const options = interaction.options.data;
   const filters = options.filter(option => !['nome'].includes(option.name));
-  const xataFilter = {page: { size: 200, offset: 0 }};
-  if (filters.length > 0) xataFilter.filter = {};
+  const xataFilter = {};
+  
   const column = {
     'jogo': 'game',
     'tipo': 'type',
@@ -59,10 +59,12 @@ async function execute(interaction) {
   };
 
   for (const option of filters) {
-    xataFilter.filter[column[option.name]] = option.value;
+    xataFilter[column[option.name]] = option.value;
   }
 
-  const items = await xata.db.items.search(name, xataFilter);
+  let query = xata.db.items;
+  if (filters.length > 0 || name) query = query.filter({ $all: { name, ...xataFilter } });
+  const items = await query.getAll();
   
   if (items.length > 0) {
     const dropdown = transformDataToDropdown(items, 0, 'getItem', 'Selecionar um item...');
