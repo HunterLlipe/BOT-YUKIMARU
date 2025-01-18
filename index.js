@@ -8,7 +8,7 @@
   Para tentar tirar qualquer dúvida quanto ao código, contato:
   DISCORD: @enzon19 | E-MAIL: contato@enzon19.com
 
-  Versão atual: 4.1.0
+  Versão atual: 4.1.1
 
 */
 
@@ -60,6 +60,10 @@ process.on('uncaughtException', (reason, origin) => logError(reason, origin));
 
 botWeb.get('/', (req, res) => { 
   res.send('Yukimaru Bot online.');
+});
+
+botWeb.get('/items', (req, res) => { 
+  res.sendFile(__dirname + '/index.html');
 });
 
 botWeb.listen(3000);
