@@ -95,11 +95,7 @@ async function execute(interaction) {
   }
 
   await interaction.reply(gifsGame.four[game]);
-
-  let banner = (await xata.db.banners.search(command.toLowerCase(), {
-      target: ['name', 'command'],
-      filter: {game}
-    }))[0];
+  let banner = await xata.db.banners.filter({ $all: { command: command.toLowerCase(), game } }).getFirst();
 
   if (!banner) {
     interaction.editReply({content: 'Este banner não existe.', attachments: [], files: []});
@@ -126,7 +122,7 @@ async function execute(interaction) {
   if (inventory) lastStarWasBoosted = JSON.parse(inventory.lastStarWasBoosted);
 
   const { wish } = wishCore.wishTenItemsAndSort(banner, streakWithout, lastStarWasBoosted);
-  if (wish.find(item => item.quality === 5)) interaction.editReply(gifsGame.four[game]);
+  if (wish.find(item => item.quality === 5)) interaction.editReply(gifsGame.five[game]);
 
   // atualizar banco de dados
   usageCount[banner.type] += 10;

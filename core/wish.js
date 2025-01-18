@@ -87,7 +87,8 @@ function checkIfIsBoosted (quality, rules, lastStarWasBoosted, bannerType) {
 }
 
 function chooseRandomItem (items, quality) {
-  const possibleItems = items.filter(item => item.quality === quality);
+  let possibleItems = items.filter(item => item.quality === quality);
+  if (possibleItems.length === 0) possibleItems = items.filter(item => item.quality === quality + 1);
   const chosen = Math.floor(Math.random() * possibleItems.length);
   const chosenItem = possibleItems[chosen];
   return chosenItem;
