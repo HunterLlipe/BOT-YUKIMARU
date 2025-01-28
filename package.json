@@ -8,7 +8,7 @@
   },
   "author": "",
   "engines": {
-    "node": "21.7.1"
+    "node": "22.13.0"
   },
   "license": "ISC",
   "dependencies": {
@@ -20,7 +20,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "google-sr": "^5.0.0",
-    "jsdom": "^24.1.1",
+    "jsdom": "^26.0.0",
     "lodash": "^4.17.21",
     "luxon": "^3.3.0",
     "node-vibrant": "^3.2.1-alpha.1",
