@@ -27,7 +27,8 @@ const properties = new SlashCommandBuilder()
       .addChoices(
         { name: "Personagem", value: "character" },
         { name: "Arma", value: "weapon" },
-        { name: "Mochileiro", value: "standard" }
+        { name: "Mochileiro", value: "standard" },
+        { name: "Registro de Oração", value: "chronicled" }
       )
   );
 

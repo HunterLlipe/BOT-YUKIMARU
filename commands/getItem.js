@@ -239,6 +239,12 @@ async function autocomplete(interaction) {
       type: "weapon"
     },
     {
+      name: "A Recordação",
+      value: "remembrance",
+      game: "honkai",
+      type: "weapon"
+    },
+    {
       name: "Ataque",
       value: "attack",
       game: "zzz",

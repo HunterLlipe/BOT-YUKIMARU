@@ -1,37 +1,62 @@
-const { SlashCommandBuilder } = require('discord.js');
-const axios = require('axios');
-const logError = require('../core/logError');
-const jsdom = require('jsdom');
+const { SlashCommandBuilder } = require("discord.js");
+const axios = require("axios");
+const logError = require("../core/logError");
+const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
-const { transformItemToEmbed, transformBannerToEmbed } = require("../core/embedMaker");
-const generate = require('../core/generate');
+const {
+  transformItemToEmbed,
+  transformBannerToEmbed,
+} = require("../core/embedMaker");
+const generate = require("../core/generate");
 const { isNot } = require("@xata.io/client");
-const sharp = require('sharp'); 
 
 const properties = new SlashCommandBuilder()
-  .setName('atualizar')
-  .setDescription('Atualizar automaticamente itens e banners com base em conteúdos na internet.')
+  .setName("atualizar")
+  .setDescription(
+    "Atualizar automaticamente itens e banners com base em conteúdos na internet."
+  )
   .setDefaultMemberPermissions(0)
   .setDMPermission(false)
-  .addSubcommand(subcommand =>
+  .addSubcommand((subcommand) =>
     subcommand
-      .setName('banners')
-      .setDescription('Atualizar automaticamente banners e itens de um jogo.')
-      .addStringOption(option => option.setName('jogo').setDescription('Jogo em que os itens estão.').addChoices(
-        { name: 'Genshin Impact', value: 'genshin' },
-        { name: 'Honkai: Star Rail', value: 'honkai' },
-        { name: 'Zenless Zone Zero', value: 'zzz' }
-      ).setRequired(true)))
-  .addSubcommand(subcommand =>
+      .setName("banners")
+      .setDescription("Atualizar automaticamente banners e itens de um jogo.")
+      .addStringOption((option) =>
+        option
+          .setName("jogo")
+          .setDescription("Jogo em que os itens estão.")
+          .addChoices(
+            { name: "Genshin Impact", value: "genshin" },
+            { name: "Honkai: Star Rail", value: "honkai" },
+            { name: "Zenless Zone Zero", value: "zzz" }
+          )
+          .setRequired(true)
+      )
+  )
+  .addSubcommand((subcommand) =>
     subcommand
-      .setName('imagens')
-      .setDescription('Envie uma lista de nomes de itens (em inglês) separados por ; para atualizar imagem automaticamente.')
-      .addStringOption(option => option.setName('jogo').setDescription('Jogo em que os itens estão.').addChoices(
-        { name: 'Genshin Impact', value: 'genshin' },
-        { name: 'Honkai: Star Rail', value: 'honkai' },
-        { name: 'Zenless Zone Zero', value: 'zzz' }
-      ).setRequired(true))
-      .addStringOption(option => option.setName('lista').setDescription('Lista de itens para serem cadastrados.').setRequired(true)));
+      .setName("itens")
+      .setDescription(
+        "Envie uma lista de nomes de itens (em inglês) separados por ; para atualizar dados automaticamente."
+      )
+      .addStringOption((option) =>
+        option
+          .setName("jogo")
+          .setDescription("Jogo em que os itens estão.")
+          .addChoices(
+            { name: "Genshin Impact", value: "genshin" },
+            { name: "Honkai: Star Rail", value: "honkai" },
+            { name: "Zenless Zone Zero", value: "zzz" }
+          )
+          .setRequired(true)
+      )
+      .addStringOption((option) =>
+        option
+          .setName("lista")
+          .setDescription("Lista de itens para serem atualizados.")
+          .setRequired(true)
+      )
+  );
       
 async function execute (interaction) {
   await interaction.deferReply();
@@ -53,8 +78,10 @@ async function execute (interaction) {
 
     const {data: wikiaDOM} = await axios.get(gameConfig.url);
     const { document } = (new JSDOM(wikiaDOM)).window;
-    const aElements = Array.from(document.querySelectorAll(gameConfig.querySelector)).find(e => e.textContent == gameConfig.bannerLabel).parentNode.parentNode.parentNode.querySelectorAll('a.image.link-internal');
-    const bannersURLs = Array.from(aElements).map(e => gameConfig.url.replace(/(.*)\/wiki\/.*/g, '$1') + e.href).filter(e => !gameConfig.exclude.includes(e));
+    const tableElement = Array.from(document.querySelectorAll(gameConfig.querySelector)).find(e => e.textContent == gameConfig.bannerLabel).parentNode.parentNode.parentNode;
+    const aElements = Array.from(tableElement.querySelectorAll('a.image.link-internal'));
+    let bannersURLs = aElements.map(e => gameConfig.url.replace(/(.*)\/wiki\/.*/g, '$1') + e.href).filter(e => !gameConfig.exclude.includes(e));
+    if (bannersURLs.length === 0) bannersURLs = Array.from(tableElement.querySelectorAll('a.new')).map(e => gameConfig.url.replace(/(.*)\/wiki\/.*/g, '$1') + e.href.replace(/(.*)\/Special\:Upload\?wpDestFile\=(.*)_(20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]).*/g, '$1/$2/$3'));
     
     await interaction.editReply({
       content: `⏳ Deletando todos os banners... - ${Math.floor((1/(bannersURLs.length + 2)) * 100)}%`
@@ -80,10 +107,11 @@ async function execute (interaction) {
         const itemResponse = await generate[game + "Items"](fails);
         const itemsEmbeds = itemResponse.items.length > 10 ? [] : await Promise.all(itemResponse.items.map(async (item) => await transformItemToEmbed(item)));
         interaction.followUp({
-          content: `**Falhas:** ${itemResponse.fails.length > 0 ? response.fails.join(';') : 'Nenhuma falha.'}\n**Cadastrados:** ${itemResponse.items.length <= 10 ? '' : itemResponse.items.map(item => item.name).join(', ')}`, 
+          content: `**Falhas:** ${itemResponse.fails.length > 0 ? itemResponse.fails.join(';') : 'Nenhuma falha.'}\n**Cadastrados:** ${itemResponse.items.length <= 10 ? '' : itemResponse.items.map(item => item.name).join(', ')}`, 
           embeds: itemsEmbeds
         });
 
+        banner.delete();
         const updateBannerResponse = await generate[game + "Banner"](url);
         banner = await updateBannerResponse.banner;
         fails = await updateBannerResponse.fails;
@@ -99,10 +127,9 @@ async function execute (interaction) {
     interaction.editReply({
       content: `✅ Banners atualizados. - 100%`
     });
-  } else if (chosenCommand === 'imagens') {
+  } else if (chosenCommand === 'itens') {
     const fails = [];
     const newItems = [];
-    let imageURL = '';
 
     const listAsString = interaction.options.getString('lista');
     const itemsNames = listAsString.split(";").filter(item => item);
@@ -116,20 +143,12 @@ async function execute (interaction) {
 
     for (const item of itemsData) {
       try {
-        imageURL = await generate[game + "Image"](item.name, item.type);
-  
-        // converter imagem para PNG
-        const imageFileWEBP = await axios.get(imageURL, {
-          responseType: 'arraybuffer',
-        });
-        const imageFilePNG = await sharp(imageFileWEBP.data).toFormat('png').toBuffer();
-        const imageUpload = await cloudinary.uploader.upload('data:image/png;base64,' + imageFilePNG.toString('base64'));
-        imageURL = imageUpload.secure_url;
-
-        const updatedItem = await item.update({image: imageURL});
+        const {items: updatedItemData, fails} = await generate[game + "Items"]([item.englishName || item.name], "not");
+        if (fails.length > 0) throw fails;
+        const updatedItem = await item.update(updatedItemData[0]);
         newItems.push(updatedItem);
       } catch (error) {
-        logError(error, 'gerar imagem para ' + item.name)
+        logError(error, 'atualizar ' + item.name)
         fails.push(item.name);
         continue;
       }

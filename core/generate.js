@@ -8,10 +8,11 @@ const nodemw = require('nodemw');
 // necessário para pegar a imagem
 const googleSr = require('google-sr');
 const axios = require('axios');
+const e = require('express');
 
 // (() => ddg.search('teste').then(e => console.log(e)))()
 
-function genshinItems (names) {
+function genshinItems (names, method) {
   const host = 'genshin-impact.fandom.com';
   const game = 'genshin';
   const qualityRegExp = /\|quality.*?= ?(.*)/;
@@ -19,10 +20,10 @@ function genshinItems (names) {
   const weaponSubtypeRegExp = /\|type.*?= ?(.*)/;
   const characterSubtypeRegExp = /\|element.*?= ?(.*)/;
 
-  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, null, genshinImage);
+  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, null, genshinImage, method);
 }
 
-function honkaiItems (names) {
+function honkaiItems (names, method) {
   const host = 'honkai-star-rail.fandom.com';
   const game = 'honkai';
   const qualityRegExp = /\|rarity.*?= ?(.*)/;
@@ -31,10 +32,10 @@ function honkaiItems (names) {
   const characterSubtypeRegExp = /\|combattype.*?= ?(.*)/;
   const secondSubtypeRegExp = /\|path.*?= ?(.*)/;
 
-  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, secondSubtypeRegExp, honkaiImage);
+  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, secondSubtypeRegExp, honkaiImage, method);
 }
 
-function zzzItems (names) {
+function zzzItems (names, method) {
   const host = 'zenless-zone-zero.fandom.com';
   const game = 'zzz';
   const qualityRegExp = /\|rank.*?= ?(.*)/;
@@ -43,7 +44,7 @@ function zzzItems (names) {
   const characterSubtypeRegExp = /\|specialty.*?= ?(.*)/;
   const secondSubtypeRegExp = /\|attribute.*?= ?(.*)/;
 
-  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, secondSubtypeRegExp, zzzImage);
+  return items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, secondSubtypeRegExp, zzzImage, method);
 }
 
 async function genshinImage(name, itemType) {
@@ -59,8 +60,9 @@ async function genshinImage(name, itemType) {
   };
 
   const searchResult = (await googleSr.search({query: name + ' honey impact'}))[0];
-  const honeyID = searchResult?.link.split('/')[3];
-  const honeyImageURL = `https://genshin.honeyhunterworld.com/img/${urlVariables.itemType[itemType]}${honeyID}_${urlVariables.imageType[itemType]}.webp`;
+  const searchResultItem = searchResult.find(e => e.title.toLowerCase().includes(name.toLowerCase())) || searchResult[0];
+  const honeyID = searchResultItem?.link.split('/')[3];
+  const honeyImageURL = `https://gensh.honeyhunterworld.com/img/${urlVariables.itemType[itemType]}${honeyID}_${urlVariables.imageType[itemType]}.webp`;
   
   return honeyImageURL;
 }
@@ -72,13 +74,14 @@ async function honkaiImage(name, itemType) {
       "character": "character/"
     },
     imageType: {
-      "weapon": "icon_figure",
+      "weapon": "icon_thumbnail_large",
       "character": "head_icon"
     }
   };
 
-  const searchResult = (await googleSr.search({query: name + ' Honkai Star Rail Database - Honey Hunter'}))[0];
-  const honeyID = searchResult?.link.split('/')[3];
+  const searchResult = await googleSr.search({query: name + ' Honkai Star Rail Database - Honey Hunter'});
+  const searchResultItem = searchResult.find(e => e.title.toLowerCase().includes(name.toLowerCase())) || searchResult[0];
+  const honeyID = searchResultItem?.link.split('/')[3];
   const honeyImageURL = `https://starrail.honeyhunterworld.com/img/${urlVariables.itemType[itemType]}${honeyID}_${urlVariables.imageType[itemType]}.webp`;
 
   return honeyImageURL;
@@ -108,7 +111,7 @@ async function zzzImage(name, itemType) {
   }
 }
 
-async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, secondSubtypeRegExp, imageFunction) {
+async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtypeRegExp, characterSubtypeRegExp, secondSubtypeRegExp, imageFunction, method) {
   const fixSubtypes = ['destruction', 'erudition', 'harmony', 'nihility', 'preservation', 'abundance'];
   const sharp = require('sharp');
 
@@ -123,11 +126,13 @@ async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtype
   let fails = [];
 
   for (const name of names) {
-    // const searchArticle = (await googleSr.search({query: `${name} ${({'zzz': 'Zenless Zone Zero', 'honkai': 'Honkai Star Rail', 'genshin': 'Genshin Impact'})[game]} fandom`}))[0];
-    // const searchArticleResult = searchArticle?.link.split('/')[4].replace(/_/g, ' ');
+    const searchArticle = await googleSr.search({query: `${name} ${({'zzz': 'Zenless Zone Zero', 'honkai': 'Honkai Star Rail', 'genshin': 'Genshin Impact'})[game]} fandom`});
+    const searchArticleResult = decodeURIComponent(searchArticle?.find(e => e.link.includes(host + "/wiki/"))?.link.split('/')[4].replace(/_/g, ' '));
+    
     let article = await new Promise((resolve, reject) => {
-      fandom.getArticle(name, async (error, article) => {
+      fandom.getArticle((searchArticleResult || name), async (error, article) => {
         if (error) {
+          console.error('wiki error:', error)
           reject(error);
         } else {
           resolve(article);
@@ -183,11 +188,11 @@ async function items(names, game, host, qualityRegExp, typeRegExp, weaponSubtype
       imageURL = imageUpload.secure_url;
     } catch (error) {
       logError(error, 'gerar imagem para ' + name)
-      fails.push(name);
+      imageURL = 'https://res.cloudinary.com/duwng4tki/image/upload/v1736277599/chba1o6wjkxqtaxozfmx.png';
       continue;
     }
-    
-    items.push(await newData.newItem(game, portugueseName, englishName, itemType, itemQuality, imageURL, fixSubtypes.includes(itemSubtype) ? 'the ' + itemSubtype : itemSubtype, fixSubtypes.includes(itemSubtype2) ? 'the ' + itemSubtype2 : itemSubtype2));
+
+    items.push(await newData.newItem(game, portugueseName, englishName, itemType, itemQuality, imageURL, fixSubtypes.includes(itemSubtype) ? 'the ' + itemSubtype : itemSubtype, fixSubtypes.includes(itemSubtype2) ? 'the ' + itemSubtype2 : itemSubtype2, undefined, method));
   }
   
   return {items, fails};
@@ -238,7 +243,7 @@ async function banner (game, linkData, templateName, weaponLabel, characterLabel
       }
     });
   });
-  if (!article.includes(templateName)) throw "Link inválido ou impossibilidade de gerar banner através dele.";
+  if (!article?.includes(templateName)) throw "Link inválido ou impossibilidade de gerar banner através dele.";
 
   // itens
   let generalItems, boostedItems;
@@ -277,13 +282,16 @@ async function banner (game, linkData, templateName, weaponLabel, characterLabel
     "w-engine channel": "weapon",
     "padrão": "standard",
     "standard": "standard",
-    "stable": "standard"
+    "stable": "standard",
+    "chronicled": "chronicled",
+    "registro de oração": "chronicled"
   };
   const type = types[(article.toLowerCase().match(/\|type.*?= ?(.*)/)[1])?.trim()];
   const commandNicks = {
     character: boostedItems[0],
     weapon: 'armas',
-    standard: 'mochileiro'
+    standard: 'mochileiro',
+    chronicled: 'registro'
   }
 
   return await newData.newBanner(game, portugueseName, type, commandNicks[type], generalItems, boostedItems, hostIsPortuguese ? 'name' : 'englishName');

@@ -76,7 +76,8 @@ const properties = new SlashCommandBuilder()
           .addChoices(
             { name: "Personagem", value: "character" },
             { name: "Arma", value: "weapon" },
-            { name: "Mochileiro", value: "standard" }
+            { name: "Mochileiro", value: "standard" },
+            { name: "Registro de Oração", value: "chronicled" }
           )
       )
     )
@@ -339,6 +340,12 @@ async function autocomplete(interaction) {
     {
       name: "A Abundância",
       value: "the abundance",
+      game: "honkai",
+      type: "weapon"
+    },
+    {
+      name: "A Recordação",
+      value: "remembrance",
       game: "honkai",
       type: "weapon"
     },

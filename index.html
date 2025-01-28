@@ -8,11 +8,17 @@
       body: '{"columns":["name","type","image","subtype","englishName","game","subtype2"],"sort":{"xata.createdAt":"desc"},"page":{"size":500, "offset": ' + offset + '}}'
     };
 
+    const colors = {
+      'honkai': 'pink',
+      'genshin': 'cyan',
+      'zzz': 'gray'
+    }
+
     fetch('https://yukimaru-bqpg78.us-east-1.xata.sh/db/yukimaru:main/tables/items/query', options)
       .then(response => response.json())
       .then(({records}) => {
-        console.log('Fetched ' + records.length + ' items');
-        document.querySelector('#items').innerHTML = records.map(e => `<div class="item">
+        console.log('Fetched ' + records.length + ' items of 500 per page');
+        document.querySelector('#items').innerHTML = records.map(e => `<div class="item" style="background-color: ${colors[e.game]}">
     <img src="${e.image}">
     <p>${e.englishName}</p>
   </div>`).join('');
@@ -35,6 +41,7 @@
 
 <button onclick="previousPage()">Anterior</button>
 <button onclick="nextPage()">Próxima</button>
+<span>P: Honkai; C: Genshin; G: ZZZ</span>
 <div id="items"></div>
 
 <style>

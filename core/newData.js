@@ -2,7 +2,7 @@ const xata = global.xata;
 const Vibrant = require("node-vibrant");
 
 async function newItem (game, name, englishName, type, quality, image, subtype, subtype2, database = xata.db.items, method = 'create') {
-  const subtypes = ['anemo', 'geo', 'electro', 'dendro', 'hydro', 'pyro', 'cryo', 'sword', 'claymore', 'polearm', 'catalyst', 'bow', 'physical', 'fire', 'ice', 'lightning', 'wind', 'quantum', 'imaginary', 'preservation', 'the destruction', 'the hunt', 'the erudition', 'the harmony', 'the nihility', 'the preservation', 'the abundance', "attack", "stun", "anomaly", "support", "defense", "fire", "electric", "ice", "physical", "ether"];
+  const subtypes = ['anemo', 'geo', 'electro', 'dendro', 'hydro', 'pyro', 'cryo', 'sword', 'claymore', 'polearm', 'catalyst', 'bow', 'physical', 'fire', 'ice', 'lightning', 'wind', 'quantum', 'imaginary', 'preservation', 'the destruction', 'the hunt', 'the erudition', 'the harmony', 'the nihility', 'the preservation', 'the abundance',  'remembrance', "attack", "stun", "anomaly", "support", "defense", "fire", "electric", "ice", "physical", "ether"];
   // formatando dados
   game = game.toLowerCase().trim();
   type = type?.toLowerCase().trim();
@@ -18,7 +18,16 @@ async function newItem (game, name, englishName, type, quality, image, subtype, 
   if (isNaN(quality)) throw `Quantidade de estrelas não é um número para item ${name}.`;
   if (quality < 1 || quality > 5) throw `Quantidade de estrelas errada para item ${name}.`;
   
-  return database[method]({
+  return method === 'not' ? {
+    game: game,
+    name: name,
+    englishName: englishName.toLowerCase(),
+    type: type,
+    quality: quality,
+    image: image,
+    subtype: subtype,
+    subtype2: subtype2 || null
+  } : database[method]({
     game: game,
     name: name,
     englishName: englishName.toLowerCase(),
@@ -38,7 +47,7 @@ async function newBanner (game, name, type, command, generalItems, boostedItems,
 
   // conferindo dados
   if (!["honkai", "genshin", "zzz"].includes(game)) throw "Jogo inexistente.";
-  if (!["weapon", "character", "standard"].includes(type)) throw "Tipo de banner inexistente.";
+  if (!["weapon", "character", "standard", "chronicled"].includes(type)) throw "Tipo de banner inexistente.";
   
 	const itemsData = await xata.db.items.filter({
     game: game,

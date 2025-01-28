@@ -31,6 +31,7 @@ async function transformItemToEmbed(item) {
     "the nihility": "A Inexistência",
     "the preservation": "A Preservação",
     "the abundance": "A Abundância",
+    remembrance: "A Recordação",
     attack: "Ataque",
     stun: "Atordoar",
     anomaly: "Anomalia",
@@ -113,7 +114,8 @@ async function transformBannerToEmbed(banner) {
   const typePortuguese = {
     weapon: "Arma",
     character: "Personagem",
-    standard: "Mochileiro/Padrão"
+    standard: "Mochileiro/Padrão",
+    chronicled: "Registro de Oração"
   };
 
   const generalItems = (await xata.db.items.read(banner.generalItems)).filter(item => item);
@@ -159,6 +161,7 @@ async function transformWishToEmbed(items, interaction, banner, inventory) {
     "the nihility": "<:AInexistencia:1102813674990735412>",
     "the preservation": "<:APreservacao:1102813734071717888>",
     "the abundance": "<:AAbundancia:1102813399148134443>",
+    remembrance: "<:HSR_ARecordao:1308645070353727488>",
     attack: "<:ZZZ_ataque:1272410661993058395>",
     stun: "<:ZZZ_atordoador:1272412583839928320>",
     anomaly: "<:ZZZ_anomalia:1272410673141383270>",
