@@ -59,7 +59,7 @@ async function genshinImage(name, itemType) {
     }
   };
 
-  const searchResult = (await googleSr.search({query: name + ' honey impact'}))[0];
+  const searchResult = (await googleSr.search({query: name + ' honey impact'}));
   const searchResultItem = searchResult.find(e => e.title.toLowerCase().includes(name.toLowerCase())) || searchResult[0];
   const honeyID = searchResultItem?.link.split('/')[3];
   const honeyImageURL = `https://gensh.honeyhunterworld.com/img/${urlVariables.itemType[itemType]}${honeyID}_${urlVariables.imageType[itemType]}.webp`;
