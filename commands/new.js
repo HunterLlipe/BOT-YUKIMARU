@@ -499,6 +499,12 @@ async function autocomplete(interaction) {
       type: "weapon"
     },
     {
+      name: "Destruidor",
+      value: "rupture",
+      game: "zzz",
+      type: "weapon"
+    },
+    {
       name: "Fogo",
       value: "fire",
       game: "zzz",
@@ -525,6 +531,18 @@ async function autocomplete(interaction) {
     {
       name: "Éter",
       value: "ether",
+      game: "zzz",
+      type: "character"
+    },
+    {
+      name: "Sépia",
+      value: "auric ink",
+      game: "zzz",
+      type: "character"
+    },
+    {
+      name: "Geada",
+      value: "frost",
       game: "zzz",
       type: "character"
     }

@@ -37,11 +37,14 @@ async function transformItemToEmbed(item) {
     anomaly: "Anomalia",
     support: "Suporte",
     defense: "Defesa",
+    rupture: "Destruidor",
     fire: "Fogo",
     electric: "Elétrico",
     ice: "Gelo",
     physical: "Físico",
     ether: "Éter",
+    frost: "Geada",
+    "auric ink": "Sépia"
   };
 
   const typePortuguese = {
@@ -165,13 +168,16 @@ async function transformWishToEmbed(items, interaction, banner, inventory) {
     attack: "<:ZZZ_ataque:1272410661993058395>",
     stun: "<:ZZZ_atordoador:1272412583839928320>",
     anomaly: "<:ZZZ_anomalia:1272410673141383270>",
+    rupture: "<:ZZZ_Destruidor:1375508145882927226>",
     support: "<:ZZZ_assistncia:1272410694444384256>",
     defense: "<:ZZZ_defesa:1272411806127624263>",
     fire: "<:ZZZ_fogo:1272410705785651212>",
     electric: "<:ZZZ_raio:1272410649602953257>",
     ice: "<:ZZZ_gelo:1272414853117644864>",
     physical: "<:ZZZ_fsico:1272410683593592924>",
-    ether: "<:ZZZ_ter:1272410628828696647>"
+    ether: "<:ZZZ_ter:1272410628828696647>",
+    "auric ink": "<:ZZZ_Sepia:1375507480670502993>",
+    frost: "<:ZZZ_gelo:1272414853117644864>"
   };
   const guaranteeWishIndex = {
     'character': 90,
