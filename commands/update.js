@@ -72,7 +72,7 @@ async function execute(interaction) {
     const wikiasConfig = {
       genshin: {
         url: "https://genshin-impact.fandom.com/wiki/Genshin_Impact_Wiki",
-        bannerLabel: "Current Wishes\n",
+        bannerLabel: "Current Wishes",
         querySelector: ".Mainpage-header",
         exclude: [
           "https://genshin-impact.fandom.com/wiki/Beginners%27_Wish",
@@ -104,10 +104,12 @@ async function execute(interaction) {
     const { document } = new JSDOM(wikiaDOM).window;
     const tableElement = Array.from(
       document.querySelectorAll(gameConfig.querySelector)
-    ).find((e) => e.textContent == gameConfig.bannerLabel).parentNode.parentNode
-      .parentNode;
+    ).find((e) => e.textContent == gameConfig.bannerLabel);
     const aElements = Array.from(
-      tableElement.querySelectorAll("a.image.link-internal")
+      (game === "genshin"
+        ? tableElement.parentNode
+        : tableElement.parentNode.parentNode.parentNode
+      ).querySelectorAll("a.image.link-internal")
     );
     let bannersURLs = aElements
       .map((e) => gameConfig.url.replace(/(.*)\/wiki\/.*/g, "$1") + e.href)
