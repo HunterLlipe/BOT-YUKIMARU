@@ -66,5 +66,5 @@ botWeb.get('/items', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-botWeb.listen(3000);
+botWeb.listen(process.env.PORT || 3000, '0.0.0.0');
 bot.login(process.env.DISCORD_TOKEN);
